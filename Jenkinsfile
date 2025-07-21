@@ -8,16 +8,16 @@ pipeline {
       }
     }
 
-    stage('Reconstruire les images Docker') {
+    stage('Tests (optionnel)') {
       steps {
-        sh 'docker-compose down'
-        sh 'docker-compose up --build -d'
+        sh 'npm install'
+        sh 'npm run build'
       }
     }
 
-    stage('Redémarrer les containers') {
+    stage('Déclencher déploiement Render') {
       steps {
-        sh 'docker-compose down && docker-compose up -d'
+        sh 'curl -X POST https://api.render.com/deploy/srv-d1v85oripnbc73as0ke0?key=FyOOifAwm4k'
       }
     }
   }
