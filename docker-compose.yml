@@ -1,0 +1,10 @@
+
+services:
+  mc_back:
+    build: .
+    container_name: api_motosecure
+    ports:
+      - "4000:4000"
+    environment:
+      - NODE_ENV=production
+    restart: always
