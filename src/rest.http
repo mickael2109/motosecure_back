@@ -1,0 +1,20 @@
+# https://mc-back.onrender.com
+
+###
+POST https://mc-back.onrender.com/api/gps
+Content-Type: application/json
+
+{
+    "voltage": 200
+}
+
+
+
+###
+POST http://7a13b89ec07d.ngrok-free.app/proxy-gps
+Content-Type: application/json
+
+{
+    "latitude": 200,
+    "longitude": 200
+}
