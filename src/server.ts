@@ -10,13 +10,13 @@ app.use(express.json());
 
 let lastData: any = null;
 
-app.post('/api/energie', (req: any, res: any) => {
+app.post('/api/gps', (req: any, res: any) => {
   lastData = { ...req.body, timestamp: new Date().toISOString() };
   console.log("📥 Donnée reçue :", lastData);
   res.json({ success: true });
 });
 
-app.get('/api/energie', (req: any, res: any) => {
+app.get('/api/gps', (req: any, res: any) => {
   if (!lastData) return res.status(404).json({ message: 'Aucune donnée' });
   res.json({ success: true, data: lastData });
 });
