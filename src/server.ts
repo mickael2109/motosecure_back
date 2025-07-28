@@ -6,8 +6,9 @@ import cors from "cors";
 import morgan from "morgan"; // Import Morgan
 import axios from "axios";
 import { coordonne } from "./data/coordonne";
-
-
+import UserRoutes from "./presentation/routes/UserRoute";
+import MotoRoutes from "./presentation/routes/MotoRoute";
+import CoordinateRoutes from "./presentation/routes/CoordinateRoute";
 
 const app = express();
 app.use(cors());
@@ -51,6 +52,10 @@ io.on('connection', (socket: any) => {
 });
 
 
+// routes
+app.use("/user", UserRoutes);
+app.use("/moto", MotoRoutes);
+app.use("/coordinate", CoordinateRoutes);
 
 
 let lastData: any = null;
@@ -70,12 +75,13 @@ app.get('/api/gps', (req: any, res: any) => {
 
 app.post('/proxy-gps', async (req: any, res: any) => {
   try {
-    const response = await axios.post('https://mc-back.onrender.com/api/gps', req.body, {
+
+    console.log("data esp32 : ",req.body);
+    await axios.post('https://mc-back.onrender.com/api/gps', req.body, {
       headers: { 'Content-Type': 'application/json' }
     });
-    console.log("response : ",response.data);
     
-    res.status(200).json({ success: true });
+    res.status(200).json({ success: true, data: req.body });
   } catch (error : any) {
     console.error("Erreur proxy:", error.message);
     res.status(500).json({ success: false, message: error.message });

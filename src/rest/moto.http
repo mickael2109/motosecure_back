@@ -1,0 +1,57 @@
+# https://mc-back.onrender.com
+# http://localhost:8080
+
+
+
+
+
+### create moto
+POST http://localhost:8080/moto/create
+Content-Type: application/json
+
+{
+    "num_serie": "0001MG",
+    "pseudo": "megafi kcc",
+    "userId": 1
+}
+
+
+
+### get all moto user
+POST http://localhost:8080/moto/getallmotouser
+Content-Type: application/json
+
+{
+    "userId": 5
+}
+
+
+
+
+### get moto
+POST http://localhost:8080/moto/get
+Content-Type: application/json
+
+{
+    "motoId": 2
+}
+
+
+
+### update moto
+POST http://localhost:8080/moto/update
+Content-Type: application/json
+
+{
+    "id": 1,
+    "pseudo": "megafi kcc"
+}
+
+
+### delete moto
+DELETE http://localhost:8080/moto/delete
+Content-Type: application/json
+
+{
+    "motoId": 1
+}

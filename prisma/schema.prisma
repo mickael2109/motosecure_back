@@ -1,0 +1,72 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+
+model User {
+  id          Int     @id @default(autoincrement())
+  name        String?
+  pseudo      String?
+  email       String
+  password    String
+  adresse     String?
+  phone       String?
+  url         String?
+  status      Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  user_moto   Moto[]    
+}
+
+model Moto {
+  id                   Int       @id @default(autoincrement())
+  num_serie            String    @unique
+  pseudo               String
+  status               Boolean   @default(false)
+  userId               Int
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  User                 User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  moto_coordinate      Coordinate[] 
+  moto_notification    Notification[] 
+}
+
+model Coordinate {
+  id          Int       @id @default(autoincrement())
+  motoId      Int
+  long        Float
+  lat         Float
+  speed       Float
+  cap         String
+  date        DateTime   @default(now())
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  Moto        Moto       @relation(fields: [motoId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id          Int       @id @default(autoincrement())
+  motoId      Int
+  title       String
+  description String
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  Moto        Moto       @relation(fields: [motoId], references: [id], onDelete: Cascade)
+}

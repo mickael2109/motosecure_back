@@ -11,10 +11,10 @@ Content-Type: application/json
 
 
 ###
-POST http://7a13b89ec07d.ngrok-free.app/proxy-gps
+POST https://w7d8rlv8-8080.uks1.devtunnels.ms/proxy-gps
 Content-Type: application/json
 
 {
-    "latitude": 200,
+    "latitude": 250,
     "longitude": 200
 }

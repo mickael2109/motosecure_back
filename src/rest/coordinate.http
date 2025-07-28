@@ -1,0 +1,34 @@
+# https://mc-back.onrender.com
+# http://localhost:8080
+
+
+
+
+
+### create coordinate
+POST http://localhost:8080/coordinate/create
+Content-Type: application/json
+
+{
+    "motoId": 1,
+    "long": -34.34342,
+    "lat": 56.14432,
+    "speed": 120,
+    "cap": "north"
+}
+
+
+
+### get all moto user
+POST http://localhost:8080/coordinate/getallcoordmoto
+Content-Type: application/json
+
+{
+    "motoId": 3
+}
+
+
+
+
+### delete all coordinates
+DELETE http://localhost:8080/coordinate/deleteall

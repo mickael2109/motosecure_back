@@ -1,0 +1,61 @@
+# https://mc-back.onrender.com
+# http://localhost:8080
+
+
+### login user
+POST http://localhost:8080/user/login
+Content-Type: application/json
+
+{
+    "email": "mickaelrkt20@gmail.com",
+    "password": "Mickael0@"
+}
+
+
+### create user
+POST http://localhost:8080/user/create
+Content-Type: application/json
+
+{
+    "email": "mickaelrkt20@gmail.com",
+    "password": "Mickael0@"
+}
+
+
+
+### get user
+POST http://localhost:8080/user/get
+Content-Type: application/json
+
+{
+    "userId": 3
+}
+
+
+
+
+### get all user
+GET http://localhost:8080/user/getall
+
+
+
+### update user
+POST http://localhost:8080/user/update
+Content-Type: application/json
+
+{
+    "id": 1,
+    "name": "", 
+    "pseudo": "mickael", 
+    "adresse": "", 
+    "phone": "", 
+    "url": ""
+}
+
+### delete user
+DELETE http://localhost:8080/user/delete
+Content-Type: application/json
+
+{
+    "userId": 5
+}
