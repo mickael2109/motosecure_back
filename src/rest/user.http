@@ -13,7 +13,7 @@ Content-Type: application/json
 
 
 ### create user
-POST http://localhost:8080/user/create
+POST https://mc-back.onrender.com/user/create
 Content-Type: application/json
 
 {

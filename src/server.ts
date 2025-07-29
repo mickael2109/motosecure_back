@@ -9,6 +9,7 @@ import { coordonne } from "./data/coordonne";
 import UserRoutes from "./presentation/routes/UserRoute";
 import MotoRoutes from "./presentation/routes/MotoRoute";
 import CoordinateRoutes from "./presentation/routes/CoordinateRoute";
+import { distanceMeters } from "./utils/calculDistance";
 
 const app = express();
 app.use(cors());
@@ -89,6 +90,13 @@ app.post('/proxy-gps', async (req: any, res: any) => {
 });
 
 
+
+if (distanceMeters < 1000) {
+  console.log(`Distance entre le départ et la fin : ${distanceMeters.toFixed(2)} mètres`);
+} else {
+  const distanceKm = distanceMeters / 1000;
+  console.log(`Distance entre le départ et la fin : ${distanceKm.toFixed(2)} km`);
+}
 
 
 const PORT = process.env.PORT || 8080;
