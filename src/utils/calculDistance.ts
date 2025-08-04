@@ -21,6 +21,23 @@ function haversineDistance(lat1: number, lon1: number, lat2: number, lon2: numbe
   return R * c; // Distance en mètres
 }
 
+
+export function calculateTotalDistance(coordinates: { lat: number; long: number }[]): number {
+  if (coordinates.length < 2) return 0;
+
+  let total = 0;
+  for (let i = 0; i < coordinates.length - 1; i++) {
+    const start = coordinates[i];
+    const end = coordinates[i + 1];
+
+    total += haversineDistance(start.lat, start.long, end.lat, end.long);
+    
+  }
+
+  return total; // en mètres
+}
+
+
 // Utilisation
 const start = coordonne[0];
 const end = coordonne[coordonne.length - 1];

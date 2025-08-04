@@ -6,7 +6,7 @@
 
 
 ### create moto
-POST http://localhost:8080/moto/create
+POST https://mc-back.onrender.com/moto/create
 Content-Type: application/json
 
 {
@@ -18,22 +18,22 @@ Content-Type: application/json
 
 
 ### get all moto user
-POST http://localhost:8080/moto/getallmotouser
+POST https://mc-back.onrender.com/moto/getallmotouser
 Content-Type: application/json
 
 {
-    "userId": 5
+    "userId": 1
 }
 
 
 
 
 ### get moto
-POST http://localhost:8080/moto/get
+POST https://mc-back.onrender.com/moto/get
 Content-Type: application/json
 
 {
-    "motoId": 2
+    "motoId": 1
 }
 
 

@@ -20,11 +20,22 @@ Content-Type: application/json
 
 
 ### get all moto user
-POST http://localhost:8080/coordinate/getallcoordmoto
+POST https://mc-back.onrender.com/coordinate/getallcoordmoto
 Content-Type: application/json
 
 {
-    "motoId": 3
+    "motoId": 1
+}
+
+
+
+### get all history coordinate moto user
+# 1278
+POST http://localhost:8080/coordinate/getallhistorycoordmoto
+Content-Type: application/json
+
+{
+    "motoId": 1
 }
 
 

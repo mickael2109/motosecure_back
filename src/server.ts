@@ -1,4 +1,3 @@
-
 import express from "express";
 import http from "http";
 import { Server as SocketIoServer} from "socket.io";
@@ -89,6 +88,30 @@ app.post('/proxy-gps', async (req: any, res: any) => {
   }
 });
 
+
+async function addCoord () {
+  try {
+
+    for (let index = 0; index < coordonne.length; index++) {
+      const data = {
+        "motoId": 1,
+        "long": coordonne[index].long,
+        "lat": coordonne[index].lat,
+        "speed": 120,
+        "cap":"north"
+      }
+      await axios.post('https://mc-back.onrender.com/coordinate/create', data, {
+        headers: { 'Content-Type': 'application/json' }
+      });
+      console.log(index," : long=",coordonne[index].long,", lat=",coordonne[index].lat);
+      
+    }
+    console.log("Les coordonnées sont bien ajouté dans la db");
+  } catch (error : any) {
+    console.error("Erreur lors de l'ajout des coordonnées:", error);
+  }  
+}
+// addCoord()
 
 
 if (distanceMeters < 1000) {
