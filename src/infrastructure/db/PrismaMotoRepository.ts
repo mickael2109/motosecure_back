@@ -1,6 +1,6 @@
 
 import { Moto } from "../../domain/entities/Moto";
-import { CreateMotoInput, MotoRepository, UpdateMotoInput } from "../../domain/repositories/IMotoRepository";
+import { CreateMotoInput, MotoRepository, OnOffMotoInput, UpdateMotoInput, VibrationMotoInput } from "../../domain/repositories/IMotoRepository";
 import  prisma  from "../../lib/prisma"; 
 
 export class PrismaMotoRepository implements MotoRepository {
@@ -47,6 +47,35 @@ export class PrismaMotoRepository implements MotoRepository {
       include: { User: true }
     }) as Moto;
   }
+
+
+   // update on off user
+  async updateStatus(input: OnOffMotoInput) {
+    const updateMoto = await prisma.moto.update({
+      where: { id: input.id },
+      data: input,
+    });
+    return await prisma.moto.findUnique({
+      where: { id: updateMoto.id },
+      include: { User: true }
+    }) as Moto;
+  }
+
+
+  // update updateVibration moto
+  async updateVibration(input: VibrationMotoInput) {
+    const updateMoto = await prisma.moto.update({
+      where: { id: input.id },
+      data: input,
+    });
+    return await prisma.moto.findUnique({
+      where: { id: updateMoto.id },
+      include: { User: true }
+    }) as Moto;
+  }
+
+
+
 
   // delete moto
   async delete(motoId: number) {

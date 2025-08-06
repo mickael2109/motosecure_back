@@ -48,6 +48,31 @@ Content-Type: application/json
 }
 
 
+
+
+### on off moto
+POST http://localhost:8080/moto/updatestatus
+Content-Type: application/json
+
+{
+    "id": 1,
+    "status": false
+}
+
+
+
+### vibration moto
+POST http://localhost:8080/moto/updatevibration
+Content-Type: application/json
+
+{
+    "id": 1,
+    "isVibration": false
+}
+
+
+
+
 ### delete moto
 DELETE http://localhost:8080/moto/delete
 Content-Type: application/json

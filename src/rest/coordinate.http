@@ -31,7 +31,7 @@ Content-Type: application/json
 
 ### get all history coordinate moto user
 # 1278
-POST http://localhost:8080/coordinate/getallhistorycoordmoto
+POST https://mc-back.onrender.com/coordinate/getallhistorycoordmoto
 Content-Type: application/json
 
 {

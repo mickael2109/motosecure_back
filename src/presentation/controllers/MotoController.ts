@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import { PrismaMotoRepository } from "../../infrastructure/db/PrismaMotoRepository";
 import { CreateMotoUseCase } from "../../domain/usecases/Moto/CreateMotoUC";
 import { DeleteMotoUseCase } from "../../domain/usecases/Moto/DeleteMotoUC";
-import { UpdateMotoUseCase } from "../../domain/usecases/Moto/UpdateMotoUC";
+import { OnOffMotoUseCase, UpdateMotoUseCase, VibrationMotoUseCase } from "../../domain/usecases/Moto/UpdateMotoUC";
 import { GetAllMotoUserUseCase } from "../../domain/usecases/Moto/GetAllMotoUserUC";
 import { GetMotoUseCase } from "../../domain/usecases/Moto/GetMotoUC";
 
@@ -74,6 +74,53 @@ export class MotoController {
         res.status(400).json({ message: err.message, success: false });
         }
     }
+
+
+
+
+
+    //  update status moto
+    static async updateStatusMoto(req: Request, res: Response) {
+        try {
+        const repo = new PrismaMotoRepository();
+        const useCase = new OnOffMotoUseCase(repo);
+        const user = await useCase.execute(req.body);
+
+        let message = "Votre moto est éteint"
+        if(req.body.status === true) message = "Votre moto est allumé"
+        
+        res.status(201).json({
+            message: message,
+            data: user,
+            success: true,
+        });
+        } catch (err: any) {
+        res.status(400).json({ message: err.message, success: false });
+        }
+    }
+
+
+
+     //  update vibration moto
+    static async updateVibrationMoto(req: Request, res: Response) {
+        try {
+        const repo = new PrismaMotoRepository();
+        const useCase = new VibrationMotoUseCase(repo);
+        const user = await useCase.execute(req.body);
+
+        let message = "Vibration desactivé"
+        if(req.body.isVibration === true) message = "Vibration activé"
+        
+        res.status(201).json({
+            message: message,
+            data: user,
+            success: true,
+        });
+        } catch (err: any) {
+        res.status(400).json({ message: err.message, success: false });
+        }
+    }
+
 
 
 
