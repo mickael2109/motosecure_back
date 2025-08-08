@@ -56,7 +56,7 @@ Content-Type: application/json
 
 {
     "id": 1,
-    "status": false
+    "status": true
 }
 
 
@@ -67,7 +67,7 @@ Content-Type: application/json
 
 {
     "id": 1,
-    "isVibration": false
+    "isVibration": true
 }
 
 
@@ -79,4 +79,24 @@ Content-Type: application/json
 
 {
     "motoId": 1
+}
+
+
+
+
+### get status moto
+POST http://localhost:8080/moto/getstatus
+Content-Type: application/json
+
+{
+    "id": 1
+}
+
+
+### get virabtion moto
+POST http://localhost:8080/moto/getviration
+Content-Type: application/json
+
+{
+    "id": 1
 }

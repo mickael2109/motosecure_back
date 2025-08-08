@@ -1,7 +1,15 @@
 # https://mc-back.onrender.com
 
 ###
-POST http://a29af5b0f2a1.ngrok-free.app/api/gps
+POST http://1c1476acf823.ngrok-free.app/api/gps
+Content-Type: application/json
+
+{
+    "voltage": 200
+}
+
+###
+POST https://mc-back.onrender.com/api/gps
 Content-Type: application/json
 
 {

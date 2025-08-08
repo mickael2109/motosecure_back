@@ -9,6 +9,8 @@ import UserRoutes from "./presentation/routes/UserRoute";
 import MotoRoutes from "./presentation/routes/MotoRoute";
 import CoordinateRoutes from "./presentation/routes/CoordinateRoute";
 import { distanceMeters } from "./utils/calculDistance";
+import { loadBDToMemory } from "./utils/loadBDToMemory";
+import { dataEtatMoto, dataVirabtionMoto } from "./data/dataStocked";
 
 const app = express();
 app.use(cors());
@@ -122,7 +124,20 @@ if (distanceMeters < 1000) {
 }
 
 
+
+async function initializeAfterStart() {
+  try {
+    await loadBDToMemory();
+    console.log("📦 dataVirabtionMoto :", dataVirabtionMoto);
+    console.log("📦 dataEtatMoto :", dataEtatMoto);
+  } catch (err) {
+    console.error("❌ Erreur lors du chargement des données");
+  }
+}
+
+
 const PORT = process.env.PORT || 8080;
 server.listen(PORT, () => {
   console.log(`✅ API Motosecure MG by mickael démarrée sur http://localhost:${PORT}`);
+  initializeAfterStart(); 
 });

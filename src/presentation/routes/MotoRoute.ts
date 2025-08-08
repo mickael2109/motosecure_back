@@ -3,6 +3,9 @@ import { MotoController } from "../controllers/MotoController";
 
 const router = Router();
 
+router.post("/getstatus", MotoController.getStatusMoto);
+router.post("/getviration", MotoController.getisVibrationMoto);
+
 router.post("/get", MotoController.getMoto);
 router.post("/getallmotouser", MotoController.getAllMotoUser);
 router.post("/create", MotoController.createMoto);
