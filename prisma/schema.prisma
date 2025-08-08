@@ -15,13 +15,6 @@ generator client {
 }
 
 
-generator erd {
-  provider = "prisma-erd-generator"
-  output   = "./ERD.png" // ✅ indique le nom du fichier + extension
-  format   = "png"              // ou "png", "pdf", "md"
-}
-
-
 
 
 model User {
