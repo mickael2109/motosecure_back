@@ -139,6 +139,10 @@ app.get('/api/gps', (req: any, res: any) => {
 
 app.get('/api/vibration', (req: any, res: any) => {
   console.log("Vibration détectée");
+  io.emit('alerte', {
+    message: "Vibration détécté sur votre moto",
+    userId : 1
+  });
   res.json({ success: true, data: lastData });
 });
 
