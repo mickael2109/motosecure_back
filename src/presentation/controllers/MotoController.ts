@@ -7,6 +7,9 @@ import { OnOffMotoUseCase, UpdateMotoUseCase, VibrationMotoUseCase } from "../..
 import { GetAllMotoUserUseCase } from "../../domain/usecases/Moto/GetAllMotoUserUC";
 import { GetMotoUseCase } from "../../domain/usecases/Moto/GetMotoUC";
 import { dataEtatMoto, dataVirabtionMoto, deviceState, etatInterface, isVibrationInterface } from "../../data/dataStocked";
+import { RequestWithIO } from "../../domain/entities/RequestWithIO";
+
+
 
 export class MotoController {
 
@@ -131,7 +134,7 @@ export class MotoController {
 
 
     //  update status moto
-    static async updateStatusMoto(req: Request, res: Response) {
+    static async updateStatusMoto(req: RequestWithIO, res: Response) {
         try {
         const repo = new PrismaMotoRepository();
         const useCase = new OnOffMotoUseCase(repo);
@@ -140,10 +143,7 @@ export class MotoController {
         let message = "Votre moto est éteint"
         if(req.body.status === true) message = "Votre moto est allumé"
 
-        // const key : etatInterface = {
-        //     id: req.body.id,
-        //     status: req.body.status
-        // }
+     
 
         let statusMoteur = req.body.status === true ? "on" : "off"
         
@@ -155,16 +155,14 @@ export class MotoController {
             updatedAt: Date.now()
         };
         deviceState[req.body.id] = next;
-        // res.json(next);
 
-        // const existingIndex = dataEtatMoto.findIndex(item => item.id === key.id);
 
-        // if (existingIndex !== -1) {
-        //     dataEtatMoto[existingIndex].status = key.status;
-        // }
+        req.io.emit('statusmoto', {
+          message: message,
+          motoId : req.body.id,
+          status: req.body.status,
+        });
 
-        // console.log("📦 dataEtatMoto :", dataEtatMoto);
-        
 
         res.status(201).json({
             message: message,

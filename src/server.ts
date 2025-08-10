@@ -11,6 +11,7 @@ import CoordinateRoutes from "./presentation/routes/CoordinateRoute";
 import { distanceMeters } from "./utils/calculDistance";
 import { loadBDToMemory } from "./utils/loadBDToMemory";
 import { dataEtatMoto, dataVirabtionMoto, deviceState } from "./data/dataStocked";
+import type { RequestWithIO } from "./domain/entities/RequestWithIO";
 
 const app = express();
 app.use(cors());
@@ -81,6 +82,11 @@ const io = new SocketIoServer(server, {
     origin: 'http://localhost:3000',
     methods: ['GET', 'POST', 'PUT'] // Inclure PUT si nécessaire
   }
+});
+
+app.use((req, res, next) => {
+  (req as RequestWithIO).io = io;
+  next();
 });
 
 
