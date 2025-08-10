@@ -61,6 +61,7 @@ Content-Type: application/json
 
 
 
+
 ### vibration moto
 POST https://mc-back.onrender.com/moto/updatevibration
 Content-Type: application/json
@@ -102,11 +103,3 @@ Content-Type: application/json
 }
 
 
-###
-POST https://mc-back.onrender.com/moto/updatestatus
-Content-Type: application/json
-
-{
-    "id": 1,
-    "status": false
-}
