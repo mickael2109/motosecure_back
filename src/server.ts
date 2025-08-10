@@ -18,6 +18,63 @@ app.use(morgan('dev'));
 app.use(express.json());
 const server = http.createServer(app);
 
+const API_KEY = process.env.API_KEY || "supersecret";
+
+
+// Etat en mémoire (prod: Redis/DB)
+const deviceState: any = {}; // { [id]: { moteur: "on"/"off", bip: false, updatedAt: 0, version: 0 } }
+
+function auth(req: any, res: any, next: any) {
+  if (req.headers["x-api-key"] !== API_KEY) return res.status(401).json({error:"unauthorized"});
+  next();
+}
+
+// Définir/mettre à jour une commande
+app.post("/api/device/:id/command", auth, (req, res) => {
+  const id = req.params.id;
+  const { moteur, bip } = req.body || {};
+
+  if (moteur && !["on", "off"].includes(moteur)) {
+    return res.status(400).json({ error: "moteur must be 'on' or 'off'" });
+  }
+  const prev = deviceState[id] || { moteur: "on", bip: false, version: 0, updatedAt: 0 };
+  const next = {
+    moteur: moteur ?? prev.moteur,
+    bip: typeof bip === "boolean" ? bip : prev.bip,
+    version: prev.version + 1,
+    updatedAt: Date.now()
+  };
+  deviceState[id] = next;
+  res.json(next);
+});
+
+// Lecture de l'état courant (l’ESP32 va lire ça)
+app.get("/api/device/:id/state", auth, (req, res) => {
+  const id = req.params.id;
+  const s = deviceState[id] || { moteur: "on", bip: false, version: 0, updatedAt: 0 };
+  res.json(s);
+});
+
+// (optionnel) ACK depuis l’ESP32 si tu veux marquer consommé
+app.post("/api/device/:id/ack", auth, (req, res) => {
+  const id = req.params.id;
+  const { version } = req.body || {};
+  // Ici tu pourrais enregistrer le dernier version traité par l'ESP32
+  res.json({ ok: true, version });
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 const io = new SocketIoServer(server, {
   cors: {
