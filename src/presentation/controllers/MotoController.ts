@@ -147,9 +147,10 @@ export class MotoController {
 
         let statusMoteur = req.body.status === true ? "on" : "off"
         
-        const prev = deviceState[req.body.id] || { moteur: "on", bip: false, version: 0, updatedAt: 0 };
+        const prev = deviceState[req.body.id] || { moteur: "on", vibration: "off", bip: false, version: 0, updatedAt: 0 };
         const next = {
             moteur: statusMoteur ?? prev.moteur,
+            vibration: prev.vibration,
             bip: false,
             version: prev.version + 1,
             updatedAt: Date.now()
@@ -177,7 +178,7 @@ export class MotoController {
 
 
      //  update vibration moto
-    static async updateVibrationMoto(req: Request, res: Response) {
+    static async updateVibrationMoto(req: RequestWithIO, res: Response) {
         try {
         const repo = new PrismaMotoRepository();
         const useCase = new VibrationMotoUseCase(repo);
@@ -186,19 +187,24 @@ export class MotoController {
         let message = "Vibration desactivé"
         if(req.body.isVibration === true) message = "Vibration activé"
 
-        const key : isVibrationInterface = {
-            id: req.body.id,
-            isVibration: req.body.isVibration
-        }
+        let statusVibration = req.body.isVibration === true ? "on" : "off"
+        
+        const prev = deviceState[req.body.id] || { moteur: "on", vibration: "off", bip: false, version: 0, updatedAt: 0 };
+        const next = {
+            moteur: prev.moteur,
+            vibration: statusVibration ?? prev.vibration,
+            bip: false,
+            version: prev.version + 1,
+            updatedAt: Date.now()
+        };
+        deviceState[req.body.id] = next;
 
 
-        const existingIndex = dataVirabtionMoto.findIndex(item => item.id === key.id);
-
-        if (existingIndex !== -1) {
-            dataVirabtionMoto[existingIndex].isVibration = key.isVibration;
-        }
-
-        console.log("📦 dataVirabtionMoto :", dataVirabtionMoto);
+        req.io.emit('vibrationmoto', {
+          message: message,
+          motoId : req.body.id,
+          isVibration: req.body.isVibration,
+        });
         
         
         res.status(201).json({
