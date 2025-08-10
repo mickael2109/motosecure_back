@@ -147,10 +147,10 @@ export class MotoController {
 
         let statusMoteur = req.body.status === true ? "on" : "off"
         
-        const prev = deviceState[req.body.id] || { moteur: "on",  bip: false, version: 0, updatedAt: 0 };
+        const prev = deviceState[req.body.id] || { moteur: "on", vibration: "off", bip: false, version: 0, updatedAt: 0 };
         const next = {
             moteur: statusMoteur ?? prev.moteur,
-            // vibration: prev.vibration,
+            vibration: prev.vibration,
             bip: false,
             version: prev.version + 1,
             updatedAt: Date.now()
