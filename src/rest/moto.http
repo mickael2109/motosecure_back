@@ -62,7 +62,7 @@ Content-Type: application/json
 
 
 ### vibration moto
-POST http://localhost:8080/moto/updatevibration
+POST https://mc-back.onrender.com/moto/updatevibration
 Content-Type: application/json
 
 {
@@ -85,7 +85,7 @@ Content-Type: application/json
 
 
 ### get status moto
-POST http://localhost:8080/moto/getstatus
+POST https://mc-back.onrender.com/moto/getstatus
 Content-Type: application/json
 
 {
@@ -94,7 +94,7 @@ Content-Type: application/json
 
 
 ### get virabtion moto
-POST http://localhost:8080/moto/getviration
+POST https://mc-back.onrender.com/moto/getviration
 Content-Type: application/json
 
 {

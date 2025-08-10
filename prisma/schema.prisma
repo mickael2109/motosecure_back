@@ -73,3 +73,4 @@ model Notification {
 
   Moto        Moto       @relation(fields: [motoId], references: [id], onDelete: Cascade)
 }
+

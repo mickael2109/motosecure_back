@@ -74,6 +74,12 @@ app.get('/api/gps', (req: any, res: any) => {
 });
 
 
+app.get('/api/vibration', (req: any, res: any) => {
+  console.log("Vibration détectée");
+  res.json({ success: true, data: lastData });
+});
+
+
 
 app.post('/proxy-gps', async (req: any, res: any) => {
   try {
