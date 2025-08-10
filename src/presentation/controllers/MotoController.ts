@@ -140,21 +140,21 @@ export class MotoController {
         let message = "Votre moto est éteint"
         if(req.body.status === true) message = "Votre moto est allumé"
 
-        const key : etatInterface = {
-            id: parseInt(req.params.id),
-            status: req.body.status
-        }
+        // const key : etatInterface = {
+        //     id: req.body.id,
+        //     status: req.body.status
+        // }
 
         let statusMoteur = req.body.status === true ? "on" : "false"
-
-        const prev = deviceState[req.params.id] || { moteur: "on", bip: false, version: 0, updatedAt: 0 };
+        
+        const prev = deviceState[req.body.id] || { moteur: "on", bip: false, version: 0, updatedAt: 0 };
         const next = {
             moteur: statusMoteur ?? prev.moteur,
             bip: false,
             version: prev.version + 1,
             updatedAt: Date.now()
         };
-        deviceState[statusMoteur] = next;
+        deviceState[req.body.id] = next;
         // res.json(next);
 
         // const existingIndex = dataEtatMoto.findIndex(item => item.id === key.id);

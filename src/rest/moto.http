@@ -100,3 +100,13 @@ Content-Type: application/json
 {
     "id": 1
 }
+
+
+###
+POST http://localhost:8080/moto/updatestatus
+Content-Type: application/json
+
+{
+    "id": 1,
+    "status": false
+}
