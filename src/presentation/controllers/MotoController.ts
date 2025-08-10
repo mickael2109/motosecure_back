@@ -6,7 +6,7 @@ import { DeleteMotoUseCase } from "../../domain/usecases/Moto/DeleteMotoUC";
 import { OnOffMotoUseCase, UpdateMotoUseCase, VibrationMotoUseCase } from "../../domain/usecases/Moto/UpdateMotoUC";
 import { GetAllMotoUserUseCase } from "../../domain/usecases/Moto/GetAllMotoUserUC";
 import { GetMotoUseCase } from "../../domain/usecases/Moto/GetMotoUC";
-import { dataEtatMoto, dataVirabtionMoto, etatInterface, isVibrationInterface } from "../../data/dataStocked";
+import { dataEtatMoto, dataVirabtionMoto, deviceState, etatInterface, isVibrationInterface } from "../../data/dataStocked";
 
 export class MotoController {
 
@@ -139,20 +139,31 @@ export class MotoController {
 
         let message = "Votre moto est éteint"
         if(req.body.status === true) message = "Votre moto est allumé"
-        
 
         const key : etatInterface = {
-            id: req.body.id,
+            id: parseInt(req.params.id),
             status: req.body.status
         }
 
-        const existingIndex = dataEtatMoto.findIndex(item => item.id === key.id);
+        let statusMoteur = req.body.status === true ? "on" : "false"
 
-        if (existingIndex !== -1) {
-            dataEtatMoto[existingIndex].status = key.status;
-        }
+        const prev = deviceState[req.params.id] || { moteur: "on", bip: false, version: 0, updatedAt: 0 };
+        const next = {
+            moteur: statusMoteur ?? prev.moteur,
+            bip: false,
+            version: prev.version + 1,
+            updatedAt: Date.now()
+        };
+        deviceState[statusMoteur] = next;
+        // res.json(next);
 
-        console.log("📦 dataEtatMoto :", dataEtatMoto);
+        // const existingIndex = dataEtatMoto.findIndex(item => item.id === key.id);
+
+        // if (existingIndex !== -1) {
+        //     dataEtatMoto[existingIndex].status = key.status;
+        // }
+
+        // console.log("📦 dataEtatMoto :", dataEtatMoto);
         
 
         res.status(201).json({

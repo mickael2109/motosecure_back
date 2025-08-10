@@ -10,7 +10,7 @@ import MotoRoutes from "./presentation/routes/MotoRoute";
 import CoordinateRoutes from "./presentation/routes/CoordinateRoute";
 import { distanceMeters } from "./utils/calculDistance";
 import { loadBDToMemory } from "./utils/loadBDToMemory";
-import { dataEtatMoto, dataVirabtionMoto } from "./data/dataStocked";
+import { dataEtatMoto, dataVirabtionMoto, deviceState } from "./data/dataStocked";
 
 const app = express();
 app.use(cors());
@@ -22,7 +22,6 @@ const API_KEY = process.env.API_KEY || "supersecret";
 
 
 // Etat en mémoire (prod: Redis/DB)
-const deviceState: any = {}; // { [id]: { moteur: "on"/"off", bip: false, updatedAt: 0, version: 0 } }
 
 function auth(req: any, res: any, next: any) {
   if (req.headers["x-api-key"] !== API_KEY) return res.status(401).json({error:"unauthorized"});
@@ -30,23 +29,24 @@ function auth(req: any, res: any, next: any) {
 }
 
 // Définir/mettre à jour une commande
-app.post("/api/device/:id/command", auth, (req, res) => {
-  const id = req.params.id;
-  const { moteur, bip } = req.body || {};
+// app.post("/api/device/:id/command", auth, (req, res) => {
+//   const id = req.params.id;
+//   const { moteur, bip } = req.body || {};
 
-  if (moteur && !["on", "off"].includes(moteur)) {
-    return res.status(400).json({ error: "moteur must be 'on' or 'off'" });
-  }
-  const prev = deviceState[id] || { moteur: "on", bip: false, version: 0, updatedAt: 0 };
-  const next = {
-    moteur: moteur ?? prev.moteur,
-    bip: typeof bip === "boolean" ? bip : prev.bip,
-    version: prev.version + 1,
-    updatedAt: Date.now()
-  };
-  deviceState[id] = next;
-  res.json(next);
-});
+//   if (moteur && !["on", "off"].includes(moteur)) {
+//     return res.status(400).json({ error: "moteur must be 'on' or 'off'" });
+//   }
+//   const prev = deviceState[id] || { moteur: "on", bip: false, version: 0, updatedAt: 0 };
+//   const next = {
+//     moteur: moteur ?? prev.moteur,
+//     bip: typeof bip === "boolean" ? bip : prev.bip,
+//     version: prev.version + 1,
+//     updatedAt: Date.now()
+//   };
+//   deviceState[id] = next;
+//   res.json(next);
+
+// });
 
 // Lecture de l'état courant (l’ESP32 va lire ça)
 app.get("/api/device/:id/state", auth, (req, res) => {

@@ -26,3 +26,8 @@ Content-Type: application/json
     "latitude": 250,
     "longitude": 200
 }
+
+
+
+###
+GET https://mc-back.onrender.com/api/vibration

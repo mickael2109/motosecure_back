@@ -10,7 +10,7 @@ router.post("/get", MotoController.getMoto);
 router.post("/getallmotouser", MotoController.getAllMotoUser);
 router.post("/create", MotoController.createMoto);
 router.post("/update", MotoController.updateMoto);
-router.post("/updatestatus", MotoController.updateStatusMoto);
+router.post("/update/:id/command", MotoController.updateStatusMoto);
 router.post("/updatevibration", MotoController.updateVibrationMoto);
 router.delete("/delete", MotoController.deleteMoto);
 
