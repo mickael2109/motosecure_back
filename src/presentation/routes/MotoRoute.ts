@@ -15,9 +15,9 @@ router.post("/updatestatus", (req: any, res) => {
   MotoController.updateStatusMoto(req, res);
 });
 
-router.post("/updatevibration", (req: any, res) => {
-  MotoController.updateVibrationMoto(req, res);
-});
+// router.post("/updatevibration", (req: any, res) => {
+//   MotoController.updateVibrationMoto(req, res);
+// });
 
 router.delete("/delete", MotoController.deleteMoto);
 

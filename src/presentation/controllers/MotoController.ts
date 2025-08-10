@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import { PrismaMotoRepository } from "../../infrastructure/db/PrismaMotoRepository";
 import { CreateMotoUseCase } from "../../domain/usecases/Moto/CreateMotoUC";
 import { DeleteMotoUseCase } from "../../domain/usecases/Moto/DeleteMotoUC";
-import { OnOffMotoUseCase, UpdateMotoUseCase, VibrationMotoUseCase } from "../../domain/usecases/Moto/UpdateMotoUC";
+import { OnOffMotoUseCase, UpdateMotoUseCase } from "../../domain/usecases/Moto/UpdateMotoUC";
 import { GetAllMotoUserUseCase } from "../../domain/usecases/Moto/GetAllMotoUserUC";
 import { GetMotoUseCase } from "../../domain/usecases/Moto/GetMotoUC";
 import { dataEtatMoto, dataVirabtionMoto, deviceState, etatInterface, isVibrationInterface } from "../../data/dataStocked";
@@ -146,11 +146,11 @@ export class MotoController {
      
 
         let statusMoteur = req.body.status === true ? "on" : "off"
+        let vibrationStatus = req.body.status === true ? false : true
         
-        const prev = deviceState[req.body.id] || { moteur: "on", vibration: "off", bip: false, version: 0, updatedAt: 0 };
+        const prev = deviceState[req.body.id] || { moteur: "on", bip: false, version: 0, updatedAt: 0 };
         const next = {
             moteur: statusMoteur ?? prev.moteur,
-            vibration: prev.vibration,
             bip: false,
             version: prev.version + 1,
             updatedAt: Date.now()
@@ -162,6 +162,7 @@ export class MotoController {
           message: message,
           motoId : req.body.id,
           status: req.body.status,
+          isVibration: vibrationStatus
         });
 
 
@@ -178,44 +179,44 @@ export class MotoController {
 
 
      //  update vibration moto
-    static async updateVibrationMoto(req: RequestWithIO, res: Response) {
-        try {
-        const repo = new PrismaMotoRepository();
-        const useCase = new VibrationMotoUseCase(repo);
-        const user = await useCase.execute(req.body);
+    // static async updateVibrationMoto(req: RequestWithIO, res: Response) {
+    //     try {
+    //     const repo = new PrismaMotoRepository();
+    //     const useCase = new VibrationMotoUseCase(repo);
+    //     const user = await useCase.execute(req.body);
 
-        let message = "Vibration desactivé"
-        if(req.body.isVibration === true) message = "Vibration activé"
+    //     let message = "Vibration desactivé"
+    //     if(req.body.isVibration === true) message = "Vibration activé"
 
-        let statusVibration = req.body.isVibration === true ? "on" : "off"
+    //     let statusVibration = req.body.isVibration === true ? "on" : "off"
         
-        const prev = deviceState[req.body.id] || { moteur: "on", vibration: "off", bip: false, version: 0, updatedAt: 0 };
-        const next = {
-            moteur: prev.moteur,
-            vibration: statusVibration ?? prev.vibration,
-            bip: false,
-            version: prev.version + 1,
-            updatedAt: Date.now()
-        };
-        deviceState[req.body.id] = next;
+    //     const prev = deviceState[req.body.id] || { moteur: "on", vibration: "off", bip: false, version: 0, updatedAt: 0 };
+    //     const next = {
+    //         moteur: prev.moteur,
+    //         vibration: statusVibration ?? prev.vibration,
+    //         bip: false,
+    //         version: prev.version + 1,
+    //         updatedAt: Date.now()
+    //     };
+    //     deviceState[req.body.id] = next;
 
 
-        req.io.emit('vibrationmoto', {
-          message: message,
-          motoId : req.body.id,
-          isVibration: req.body.isVibration,
-        });
+    //     req.io.emit('vibrationmoto', {
+    //       message: message,
+    //       motoId : req.body.id,
+    //       isVibration: req.body.isVibration,
+    //     });
         
         
-        res.status(201).json({
-            message: message,
-            data: user,
-            success: true,
-        });
-        } catch (err: any) {
-        res.status(400).json({ message: err.message, success: false });
-        }
-    }
+    //     res.status(201).json({
+    //         message: message,
+    //         data: user,
+    //         success: true,
+    //     });
+    //     } catch (err: any) {
+    //     res.status(400).json({ message: err.message, success: false });
+    //     }
+    // }
 
 
 

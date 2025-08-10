@@ -31,16 +31,16 @@ export class OnOffMotoUseCase {
 
 
 
-export class VibrationMotoUseCase {
-  constructor(private readonly repo: MotoRepository) {}
+// export class VibrationMotoUseCase {
+//   constructor(private readonly repo: MotoRepository) {}
 
-  async execute(input: VibrationMotoInput): Promise<Moto> {
-    const existingMoto = await prisma.moto.findUnique({where: { id: input.id }});
-    if (!existingMoto) throw new Error("Cette moto n'existe pas!");
+//   async execute(input: VibrationMotoInput): Promise<Moto> {
+//     const existingMoto = await prisma.moto.findUnique({where: { id: input.id }});
+//     if (!existingMoto) throw new Error("Cette moto n'existe pas!");
     
-    return await this.repo.updateVibration(input);
-  }
-}
+//     return await this.repo.updateVibration(input);
+//   }
+// }
 
 
 

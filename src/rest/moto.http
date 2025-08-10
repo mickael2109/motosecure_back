@@ -51,12 +51,12 @@ Content-Type: application/json
 
 
 ### on off moto
-POST http://localhost:8080/moto/updatestatus
+POST https://mc-back.onrender.com/moto/updatestatus
 Content-Type: application/json
 
 {
     "id": 1,
-    "status": true
+    "status": false
 }
 
 

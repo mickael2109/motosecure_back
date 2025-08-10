@@ -51,9 +51,13 @@ export class PrismaMotoRepository implements MotoRepository {
 
    // update on off user
   async updateStatus(input: OnOffMotoInput) {
+    const data = {
+      status: input.status,
+      isVibration: input.status === true ? false : true
+    }
     const updateMoto = await prisma.moto.update({
       where: { id: input.id },
-      data: input,
+      data: data,
     });
     return await prisma.moto.findUnique({
       where: { id: updateMoto.id },
@@ -63,16 +67,16 @@ export class PrismaMotoRepository implements MotoRepository {
 
 
   // update updateVibration moto
-  async updateVibration(input: VibrationMotoInput) {
-    const updateMoto = await prisma.moto.update({
-      where: { id: input.id },
-      data: input,
-    });
-    return await prisma.moto.findUnique({
-      where: { id: updateMoto.id },
-      include: { User: true }
-    }) as Moto;
-  }
+  // async updateVibration(input: VibrationMotoInput) {
+  //   const updateMoto = await prisma.moto.update({
+  //     where: { id: input.id },
+  //     data: input,
+  //   });
+  //   return await prisma.moto.findUnique({
+  //     where: { id: updateMoto.id },
+  //     include: { User: true }
+  //   }) as Moto;
+  // }
 
 
 
