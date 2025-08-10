@@ -145,7 +145,7 @@ export class MotoController {
         //     status: req.body.status
         // }
 
-        let statusMoteur = req.body.status === true ? "on" : "false"
+        let statusMoteur = req.body.status === true ? "on" : "off"
         
         const prev = deviceState[req.body.id] || { moteur: "on", bip: false, version: 0, updatedAt: 0 };
         const next = {
