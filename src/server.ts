@@ -129,13 +129,7 @@ app.post('/api/gps', async (req, res) => {
   const lat2 = Number(latitude).toFixed(2);
   const lon2 = Number(longitude).toFixed(2);
 
-  io.emit('gps', {
-    longitude: longitude,
-    latitude: latitude,
-    cap: cap,
-    speed: speed,
-    userId : 1
-  });
+  
 
   // Si dataNew est null ou les coordonnées ont changé
   if (
@@ -154,8 +148,26 @@ app.post('/api/gps', async (req, res) => {
     await axios.post('https://mc-back.onrender.com/coordinate/create', data, {
       headers: { 'Content-Type': 'application/json' }
     });
+
+    io.emit('gps', {
+      longitude: longitude,
+      latitude: latitude,
+      cap: cap,
+      speed: speed,
+      userId : 1,
+      status: "move"
+    });
+
     console.log("✅ Nouvelle donnée enregistrée :", dataNew);
   } else {
+    io.emit('gps', {
+      longitude: longitude,
+      latitude: latitude,
+      cap: cap,
+      speed: speed,
+      userId : 1,
+      status: "stay"
+    });
     console.log("ℹ️ Coordonnées inchangées, pas de mise à jour. (",dataNew,")");
   }
 

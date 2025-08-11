@@ -15,5 +15,4 @@ export interface etatInterface {
 export const dataVirabtionMoto: isVibrationInterface[] = [];
 export const dataEtatMoto: etatInterface[] = [];
 export const deviceState: any = {}; // { [id]: { moteur: "on"/"off", bip: false, updatedAt: 0, version: 0 } }
-export let lastData : any = null;
-export let dataNew : any = null;
+
