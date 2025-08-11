@@ -141,7 +141,7 @@ app.post('/api/gps', async (req, res) => {
     const data = {
       "motoId": 1,
       "long": parseFloat(longitude),
-      "lat": parseFloat(longitude),
+      "lat": parseFloat(latitude),
       "speed": parseFloat(cap),
       "cap":"north"
     }
