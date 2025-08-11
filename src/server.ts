@@ -129,6 +129,14 @@ app.post('/api/gps', async (req, res) => {
   const lat2 = Number(latitude).toFixed(2);
   const lon2 = Number(longitude).toFixed(2);
 
+  io.emit('gps', {
+    longitude: longitude,
+    latitude: latitude,
+    cap: cap,
+    speed: speed,
+    userId : 1
+  });
+
   // Si dataNew est null ou les coordonnées ont changé
   if (
     !dataNew ||
