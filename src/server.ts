@@ -123,13 +123,55 @@ app.use("/moto", MotoRoutes);
 app.use("/coordinate", CoordinateRoutes);
 
 
-let lastData: any = null;
+// let lastData: any = null;
 
-app.post('/api/gps', (req: any, res: any) => {
-  lastData = { ...req.body, timestamp: new Date().toISOString() };
-  console.log("📥 Donnée reçue :", lastData);
+// app.post('/api/gps', (req: any, res: any) => {
+//   lastData = { ...req.body, timestamp: new Date().toISOString() };
+//   console.log("📥 Donnée reçue :", lastData);
+//   res.json({ success: true });
+// });
+
+let lastData : any = null;
+let dataNew : any = null;
+
+app.post('/api/gps', (req, res) => {
+  const { latitude, longitude, cap } = req.body;
+
+  // Vérification si latitude ou longitude invalides
+  if (
+    latitude == null ||
+    longitude == null ||
+    latitude === 0 ||
+    longitude === 0
+  ) {
+    console.log("⚠️ Données invalides, aucune mise à jour.");
+    return res.json({ success: false, message: "Invalid coordinates" });
+  }
+
+  // Arrondir à 2 chiffres après la virgule
+  const lat2 = Number(latitude).toFixed(2);
+  const lon2 = Number(longitude).toFixed(2);
+
+  // Si dataNew est null ou les coordonnées ont changé
+  if (
+    !dataNew ||
+    lat2 !== Number(dataNew.latitude).toFixed(2) ||
+    lon2 !== Number(dataNew.longitude).toFixed(2)
+  ) {
+    dataNew = { latitude, longitude, cap, timestamp: new Date().toISOString() };
+    console.log("✅ Nouvelle donnée enregistrée :", dataNew);
+  } else {
+    console.log("ℹ️ Coordonnées inchangées, pas de mise à jour.");
+  }
+
+  // Toujours mettre à jour lastData pour garder la trace du dernier reçu
+  lastData = { latitude, longitude, cap, timestamp: new Date().toISOString() };
+
   res.json({ success: true });
 });
+
+
+
 
 app.get('/api/gps', (req: any, res: any) => {
   if (!lastData) return res.status(404).json({ message: 'Aucune donnée' });
