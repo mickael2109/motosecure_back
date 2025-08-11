@@ -29,25 +29,7 @@ function auth(req: any, res: any, next: any) {
   next();
 }
 
-// Définir/mettre à jour une commande
-// app.post("/api/device/:id/command", auth, (req, res) => {
-//   const id = req.params.id;
-//   const { moteur, bip } = req.body || {};
 
-//   if (moteur && !["on", "off"].includes(moteur)) {
-//     return res.status(400).json({ error: "moteur must be 'on' or 'off'" });
-//   }
-//   const prev = deviceState[id] || { moteur: "on", bip: false, version: 0, updatedAt: 0 };
-//   const next = {
-//     moteur: moteur ?? prev.moteur,
-//     bip: typeof bip === "boolean" ? bip : prev.bip,
-//     version: prev.version + 1,
-//     updatedAt: Date.now()
-//   };
-//   deviceState[id] = next;
-//   res.json(next);
-
-// });
 
 // Lecture de l'état courant (l’ESP32 va lire ça)
 app.get("/api/device/:id/state", auth, (req, res) => {
@@ -123,20 +105,15 @@ app.use("/moto", MotoRoutes);
 app.use("/coordinate", CoordinateRoutes);
 
 
-// let lastData: any = null;
 
-// app.post('/api/gps', (req: any, res: any) => {
-//   lastData = { ...req.body, timestamp: new Date().toISOString() };
-//   console.log("📥 Donnée reçue :", lastData);
-//   res.json({ success: true });
-// });
 
-let lastData : any = null;
-let dataNew : any = null;
+export let lastData : any = null;
+export let dataNew : any = null;
 
 app.post('/api/gps', (req, res) => {
-  const { latitude, longitude, cap } = req.body;
-
+  const { latitude, longitude, cap, speed } = req.body;
+  console.log("GPS : ",req.body);
+  
   // Vérification si latitude ou longitude invalides
   if (
     latitude == null ||
@@ -158,10 +135,10 @@ app.post('/api/gps', (req, res) => {
     lat2 !== Number(dataNew.latitude).toFixed(2) ||
     lon2 !== Number(dataNew.longitude).toFixed(2)
   ) {
-    dataNew = { latitude, longitude, cap, timestamp: new Date().toISOString() };
+    dataNew = { latitude, longitude, cap, speed, timestamp: new Date().toISOString() };
     console.log("✅ Nouvelle donnée enregistrée :", dataNew);
   } else {
-    console.log("ℹ️ Coordonnées inchangées, pas de mise à jour.");
+    console.log("ℹ️ Coordonnées inchangées, pas de mise à jour. (",dataNew,")");
   }
 
   // Toujours mettre à jour lastData pour garder la trace du dernier reçu
@@ -173,10 +150,10 @@ app.post('/api/gps', (req, res) => {
 
 
 
-app.get('/api/gps', (req: any, res: any) => {
-  if (!lastData) return res.status(404).json({ message: 'Aucune donnée' });
-  res.json({ success: true, data: lastData });
-});
+// app.get('/api/gps', (req: any, res: any) => {
+//   if (!lastData) return res.status(404).json({ message: 'Aucune donnée' });
+//   res.json({ success: true, data: lastData });
+// });
 
 
 app.get('/api/vibration', (req: any, res: any) => {
