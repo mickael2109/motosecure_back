@@ -110,9 +110,9 @@ app.use("/coordinate", CoordinateRoutes);
 export let lastData : any = null;
 export let dataNew : any = null;
 
-app.post('/api/gps', (req, res) => {
+app.post('/api/gps', async (req, res) => {
   const { latitude, longitude, cap, speed } = req.body;
-  console.log("GPS : ",req.body);
+  // console.log("GPS : ",req.body);
   
   // Vérification si latitude ou longitude invalides
   if (
@@ -136,6 +136,16 @@ app.post('/api/gps', (req, res) => {
     lon2 !== Number(dataNew.longitude).toFixed(2)
   ) {
     dataNew = { latitude, longitude, cap, speed, timestamp: new Date().toISOString() };
+    const data = {
+      "motoId": 1,
+      "long": parseFloat(longitude),
+      "lat": parseFloat(longitude),
+      "speed": parseFloat(cap),
+      "cap":"north"
+    }
+    await axios.post('https://mc-back.onrender.com/coordinate/create', data, {
+      headers: { 'Content-Type': 'application/json' }
+    });
     console.log("✅ Nouvelle donnée enregistrée :", dataNew);
   } else {
     console.log("ℹ️ Coordonnées inchangées, pas de mise à jour. (",dataNew,")");
