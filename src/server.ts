@@ -12,6 +12,7 @@ import { distanceMeters } from "./utils/calculDistance";
 import { loadBDToMemory } from "./utils/loadBDToMemory";
 import { dataEtatMoto, dataVirabtionMoto, deviceState } from "./data/dataStocked";
 import type { RequestWithIO } from "./domain/entities/RequestWithIO";
+import moment from 'moment'
 
 const app = express();
 app.use(cors());
@@ -129,47 +130,105 @@ app.post('/api/gps', async (req, res) => {
   const lat2 = Number(latitude).toFixed(2);
   const lon2 = Number(longitude).toFixed(2);
 
+
+  const isoString = new Date().toISOString();
+  const today = moment(isoString).format('DD-MM-YYYY');
+  
+  // console.log("new Date: ",formatted);
+
+
+  if(lastData){
+    // console.log("lastData: ",moment(lastData.timestamp).format('DD-MM-YYYY'));
+    if(moment(lastData.timestamp).format('DD-MM-YYYY') !== today){
+      dataNew = { latitude, longitude, cap, speed, timestamp: new Date().toISOString() };
+      const data = {
+        "motoId": 1,
+        "long": parseFloat(longitude),
+        "lat": parseFloat(latitude),
+        "speed": parseFloat(cap),
+        "cap":"north"
+      }
+      await axios.post('https://mc-back.onrender.com/coordinate/create', data, {
+        headers: { 'Content-Type': 'application/json' }
+      });
+
+      io.emit('gps', {
+        longitude: longitude,
+        latitude: latitude,
+        cap: cap,
+        speed: speed,
+        userId : 1,
+        status: "move"
+      });
+
+      console.log("✅ Nouvelle donnée enregistrée aujourd'hui :", dataNew);
+    }else{
+        if (
+          !dataNew ||
+          lat2 !== Number(dataNew.latitude).toFixed(2) ||
+          lon2 !== Number(dataNew.longitude).toFixed(2)
+        ) {
+          dataNew = { latitude, longitude, cap, speed, timestamp: new Date().toISOString() };
+          const data = {
+            "motoId": 1,
+            "long": parseFloat(longitude),
+            "lat": parseFloat(latitude),
+            "speed": parseFloat(cap),
+            "cap":"north"
+          }
+          await axios.post('https://mc-back.onrender.com/coordinate/create', data, {
+            headers: { 'Content-Type': 'application/json' }
+          });
+
+          io.emit('gps', {
+            longitude: longitude,
+            latitude: latitude,
+            cap: cap,
+            speed: speed,
+            userId : 1,
+            status: "move"
+          });
+
+          console.log("✅ Nouvelle donnée enregistrée :", dataNew);
+        } else {
+          io.emit('gps', {
+            longitude: longitude,
+            latitude: latitude,
+            cap: cap,
+            speed: speed,
+            userId : 1,
+            status: "stay"
+          });
+          console.log("ℹ️ Coordonnées inchangées, pas de mise à jour. (",dataNew,")");
+        }
+      
+    }
+  }else{
+    dataNew = { latitude, longitude, cap, speed, timestamp: new Date().toISOString() };
+      const data = {
+        "motoId": 1,
+        "long": parseFloat(longitude),
+        "lat": parseFloat(latitude),
+        "speed": parseFloat(cap),
+        "cap":"north"
+      }
+      await axios.post('https://mc-back.onrender.com/coordinate/create', data, {
+        headers: { 'Content-Type': 'application/json' }
+      });
+
+      io.emit('gps', {
+        longitude: longitude,
+        latitude: latitude,
+        cap: cap,
+        speed: speed,
+        userId : 1,
+        status: "move"
+      });
+
+      console.log("✅ Nouvelle donnée enregistrée aujourd'hui :", dataNew);
+  }
   
 
-  // Si dataNew est null ou les coordonnées ont changé
-  if (
-    !dataNew ||
-    lat2 !== Number(dataNew.latitude).toFixed(2) ||
-    lon2 !== Number(dataNew.longitude).toFixed(2)
-  ) {
-    dataNew = { latitude, longitude, cap, speed, timestamp: new Date().toISOString() };
-    const data = {
-      "motoId": 1,
-      "long": parseFloat(longitude),
-      "lat": parseFloat(latitude),
-      "speed": parseFloat(cap),
-      "cap":"north"
-    }
-    await axios.post('https://mc-back.onrender.com/coordinate/create', data, {
-      headers: { 'Content-Type': 'application/json' }
-    });
-
-    io.emit('gps', {
-      longitude: longitude,
-      latitude: latitude,
-      cap: cap,
-      speed: speed,
-      userId : 1,
-      status: "move"
-    });
-
-    console.log("✅ Nouvelle donnée enregistrée :", dataNew);
-  } else {
-    io.emit('gps', {
-      longitude: longitude,
-      latitude: latitude,
-      cap: cap,
-      speed: speed,
-      userId : 1,
-      status: "stay"
-    });
-    console.log("ℹ️ Coordonnées inchangées, pas de mise à jour. (",dataNew,")");
-  }
 
   // Toujours mettre à jour lastData pour garder la trace du dernier reçu
   lastData = { latitude, longitude, cap, timestamp: new Date().toISOString() };
