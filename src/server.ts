@@ -77,25 +77,25 @@ app.use((req, res, next) => {
 io.on('connection', (socket: any) => {
   console.log('✅ Client connecté');
 
-  let index = 0;
-  let direction = 1; // 1 pour avancer, -1 pour reculer
+  // let index = 0;
+  // let direction = 1; // 1 pour avancer, -1 pour reculer
 
-  const interval = setInterval(() => {
-    socket.emit('location', coordonne[index]);
-    console.log(`📍 Envoi des coordonnées : ${JSON.stringify(coordonne[index])}`);
+  // const interval = setInterval(() => {
+  //   socket.emit('location', coordonne[index]);
+  //   console.log(`📍 Envoi des coordonnées : ${JSON.stringify(coordonne[index])}`);
 
-    if (direction === 1 && index === coordonne.length - 1) {
-      direction = -1;
-    } else if (direction === -1 && index === 0) {
-      direction = 1;
-    }
+  //   if (direction === 1 && index === coordonne.length - 1) {
+  //     direction = -1;
+  //   } else if (direction === -1 && index === 0) {
+  //     direction = 1;
+  //   }
 
-    index += direction;
-  }, 1000); 
+  //   index += direction;
+  // }, 1000); 
 
   socket.on('disconnect', () => {
     console.log('❌ Client déconnecté');
-    clearInterval(interval);
+    // clearInterval(interval);
   });
 });
 
@@ -148,16 +148,12 @@ app.post('/api/gps', async (req, res) => {
         "speed": parseFloat(cap),
         "cap":"north"
       }
-      await axios.post('https://mc-back.onrender.com/coordinate/create', data, {
+      const rep =await axios.post('https://mc-back.onrender.com/coordinate/create', data, {
         headers: { 'Content-Type': 'application/json' }
       });
 
       io.emit('gps', {
-        longitude: longitude,
-        latitude: latitude,
-        cap: cap,
-        speed: speed,
-        userId : 1,
+        data: rep.data,
         status: "move"
       });
 
@@ -176,27 +172,24 @@ app.post('/api/gps', async (req, res) => {
             "speed": parseFloat(cap),
             "cap":"north"
           }
-          await axios.post('https://mc-back.onrender.com/coordinate/create', data, {
+          const rep = await axios.post('https://mc-back.onrender.com/coordinate/create', data, {
             headers: { 'Content-Type': 'application/json' }
           });
 
           io.emit('gps', {
-            longitude: longitude,
-            latitude: latitude,
-            cap: cap,
-            speed: speed,
-            userId : 1,
+            data: rep.data,
             status: "move"
           });
-
           console.log("✅ Nouvelle donnée enregistrée :", dataNew);
         } else {
           io.emit('gps', {
-            longitude: longitude,
-            latitude: latitude,
-            cap: cap,
-            speed: speed,
-            userId : 1,
+            data: {
+              longitude: longitude,
+              latitude: latitude,
+              cap: cap,
+              speed: speed,
+              userId : 1,
+            },
             status: "stay"
           });
           console.log("ℹ️ Coordonnées inchangées, pas de mise à jour. (",dataNew,")");
@@ -212,16 +205,12 @@ app.post('/api/gps', async (req, res) => {
         "speed": parseFloat(cap),
         "cap":"north"
       }
-      await axios.post('https://mc-back.onrender.com/coordinate/create', data, {
+      const rep = await axios.post('https://mc-back.onrender.com/coordinate/create', data, {
         headers: { 'Content-Type': 'application/json' }
       });
 
       io.emit('gps', {
-        longitude: longitude,
-        latitude: latitude,
-        cap: cap,
-        speed: speed,
-        userId : 1,
+        data: rep.data,
         status: "move"
       });
 
