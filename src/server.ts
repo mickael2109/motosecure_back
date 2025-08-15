@@ -147,12 +147,14 @@ app.post('/api/gps', async (req, res) => {
         "speed": parseFloat(cap),
         "cap":"north"
       }
-
+      
       // save redis
+      let vibrationEnabledData = vibrationEnabled ? "on":"off"
+      let moteurOnData = moteurOn ? "on":"off"
       await redisClient.set(`long${deviceId}`, longitude);
       await redisClient.set(`lat${deviceId}`, latitude);
-      await redisClient.set(`vibrationEnabled${deviceId}`, vibrationEnabled);
-      await redisClient.set(`moteurOn${deviceId}`, moteurOn);
+      await redisClient.set(`vibrationEnabled${deviceId}`, vibrationEnabledData );
+      await redisClient.set(`moteurOn${deviceId}`, moteurOnData);
 
       console.log("valeur dans redis bien ajouté");
 
@@ -183,10 +185,12 @@ app.post('/api/gps', async (req, res) => {
           }
 
           // save redis
+          let vibrationEnabledData = vibrationEnabled ? "on":"off"
+          let moteurOnData = moteurOn ? "on":"off"
           await redisClient.set(`long${deviceId}`, longitude);
           await redisClient.set(`lat${deviceId}`, latitude);
-          await redisClient.set(`vibrationEnabled${deviceId}`, vibrationEnabled);
-          await redisClient.set(`moteurOn${deviceId}`, moteurOn);
+          await redisClient.set(`vibrationEnabled${deviceId}`, vibrationEnabledData );
+          await redisClient.set(`moteurOn${deviceId}`, moteurOnData);
 
           console.log("valeur dans redis bien ajouté");
 
@@ -226,10 +230,12 @@ app.post('/api/gps', async (req, res) => {
       }
 
       // save redis
+      let vibrationEnabledData = vibrationEnabled ? "on":"off"
+      let moteurOnData = moteurOn ? "on":"off"
       await redisClient.set(`long${deviceId}`, longitude);
       await redisClient.set(`lat${deviceId}`, latitude);
-      await redisClient.set(`vibrationEnabled${deviceId}`, vibrationEnabled);
-      await redisClient.set(`moteurOn${deviceId}`, moteurOn);
+      await redisClient.set(`vibrationEnabled${deviceId}`, vibrationEnabledData );
+      await redisClient.set(`moteurOn${deviceId}`, moteurOnData);
 
       console.log("valeur dans redis bien ajouté");
 
