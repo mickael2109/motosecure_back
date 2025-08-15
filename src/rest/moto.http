@@ -61,7 +61,6 @@ Content-Type: application/json
 
 
 
-
 ### vibration moto
 POST https://mc-back.onrender.com/moto/updatevibration
 Content-Type: application/json

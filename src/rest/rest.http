@@ -9,11 +9,12 @@ Content-Type: application/json
 }
 
 ###
-POST https://mc-back.onrender.com/api/gps
+POST http://localhost:8080/api/gps
 Content-Type: application/json
 
 {
-    "voltage": 200
+    "latitude": 200,
+    "longitude":259
 }
 
 

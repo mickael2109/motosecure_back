@@ -13,6 +13,7 @@ import { loadBDToMemory } from "./utils/loadBDToMemory";
 import { dataEtatMoto, dataVirabtionMoto, deviceState } from "./data/dataStocked";
 import type { RequestWithIO } from "./domain/entities/RequestWithIO";
 import moment from 'moment'
+import { redisClient } from "./lib/redis";
 
 const app = express();
 app.use(cors());
@@ -21,7 +22,8 @@ app.use(express.json());
 const server = http.createServer(app);
 
 const API_KEY = process.env.API_KEY || "supersecret";
-
+const port_redis = process.env.DATABASE_REDIS;
+console.log("port_redis : ",port_redis);
 
 // Etat en mémoire (prod: Redis/DB)
 
@@ -112,7 +114,7 @@ export let lastData : any = null;
 export let dataNew : any = null;
 
 app.post('/api/gps', async (req, res) => {
-  const { latitude, longitude, cap, speed } = req.body;
+  const { deviceId, vibrationEnabled, moteurOn, latitude, longitude, cap, speed } = req.body;
   // console.log("GPS : ",req.body);
   
   // Vérification si latitude ou longitude invalides
@@ -134,20 +136,27 @@ app.post('/api/gps', async (req, res) => {
   const isoString = new Date().toISOString();
   const today = moment(isoString).format('DD-MM-YYYY');
   
-  // console.log("new Date: ",formatted);
-
 
   if(lastData){
-    // console.log("lastData: ",moment(lastData.timestamp).format('DD-MM-YYYY'));
     if(moment(lastData.timestamp).format('DD-MM-YYYY') !== today){
       dataNew = { latitude, longitude, cap, speed, timestamp: new Date().toISOString() };
       const data = {
-        "motoId": 1,
+        "motoId": parseInt(deviceId),
         "long": parseFloat(longitude),
         "lat": parseFloat(latitude),
         "speed": parseFloat(cap),
         "cap":"north"
       }
+
+      // save redis
+      await redisClient.set(`long${deviceId}`, longitude);
+      await redisClient.set(`lat${deviceId}`, latitude);
+      await redisClient.set(`vibrationEnabled${deviceId}`, vibrationEnabled);
+      await redisClient.set(`moteurOn${deviceId}`, moteurOn);
+
+      console.log("valeur dans redis bien ajouté");
+
+      // save data
       const rep =await axios.post('https://mc-back.onrender.com/coordinate/create', data, {
         headers: { 'Content-Type': 'application/json' }
       });
@@ -166,12 +175,22 @@ app.post('/api/gps', async (req, res) => {
         ) {
           dataNew = { latitude, longitude, cap, speed, timestamp: new Date().toISOString() };
           const data = {
-            "motoId": 1,
+            "motoId": parseInt(deviceId),
             "long": parseFloat(longitude),
             "lat": parseFloat(latitude),
             "speed": parseFloat(cap),
             "cap":"north"
           }
+
+          // save redis
+          await redisClient.set(`long${deviceId}`, longitude);
+          await redisClient.set(`lat${deviceId}`, latitude);
+          await redisClient.set(`vibrationEnabled${deviceId}`, vibrationEnabled);
+          await redisClient.set(`moteurOn${deviceId}`, moteurOn);
+
+          console.log("valeur dans redis bien ajouté");
+
+          // save data
           const rep = await axios.post('https://mc-back.onrender.com/coordinate/create', data, {
             headers: { 'Content-Type': 'application/json' }
           });
@@ -199,12 +218,22 @@ app.post('/api/gps', async (req, res) => {
   }else{
     dataNew = { latitude, longitude, cap, speed, timestamp: new Date().toISOString() };
       const data = {
-        "motoId": 1,
+        "motoId": parseInt(deviceId),
         "long": parseFloat(longitude),
         "lat": parseFloat(latitude),
         "speed": parseFloat(cap),
         "cap":"north"
       }
+
+      // save redis
+      await redisClient.set(`long${deviceId}`, longitude);
+      await redisClient.set(`lat${deviceId}`, latitude);
+      await redisClient.set(`vibrationEnabled${deviceId}`, vibrationEnabled);
+      await redisClient.set(`moteurOn${deviceId}`, moteurOn);
+
+      console.log("valeur dans redis bien ajouté");
+
+      // save data
       const rep = await axios.post('https://mc-back.onrender.com/coordinate/create', data, {
         headers: { 'Content-Type': 'application/json' }
       });
@@ -306,7 +335,7 @@ async function initializeAfterStart() {
 }
 
 
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 8081;
 server.listen(PORT, () => {
   console.log(`✅ API Motosecure MG by mickael démarrée sur http://localhost:${PORT}`);
   initializeAfterStart(); 
