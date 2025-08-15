@@ -1,0 +1,27 @@
+# https://mc-back.onrender.com
+# http://localhost:8080
+
+
+
+
+
+### create notification
+POST http://localhost:8080/notification/create
+Content-Type: application/json
+
+{
+    "motoId": 1,
+    "title": "Vibration détectée",
+    "description": "Alerte! votre moto se déplace"
+}
+
+
+
+### get all notification user
+POST http://localhost:8080/notification/getall
+Content-Type: application/json
+
+{
+    "userId": 1
+}
+

@@ -8,6 +8,7 @@ import { coordonne } from "./data/coordonne";
 import UserRoutes from "./presentation/routes/UserRoute";
 import MotoRoutes from "./presentation/routes/MotoRoute";
 import CoordinateRoutes from "./presentation/routes/CoordinateRoute";
+import NotificationRoutes from "./presentation/routes/NotificationRoute";
 import { distanceMeters } from "./utils/calculDistance";
 import { loadBDToMemory } from "./utils/loadBDToMemory";
 import { dataEtatMoto, dataVirabtionMoto, deviceState } from "./data/dataStocked";
@@ -51,17 +52,6 @@ app.post("/api/device/:id/ack", auth, (req, res) => {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 const io = new SocketIoServer(server, {
   cors: {
     origin: 'http://localhost:3000',
@@ -79,22 +69,6 @@ app.use((req, res, next) => {
 io.on('connection', (socket: any) => {
   console.log('✅ Client connecté');
 
-  // let index = 0;
-  // let direction = 1; // 1 pour avancer, -1 pour reculer
-
-  // const interval = setInterval(() => {
-  //   socket.emit('location', coordonne[index]);
-  //   console.log(`📍 Envoi des coordonnées : ${JSON.stringify(coordonne[index])}`);
-
-  //   if (direction === 1 && index === coordonne.length - 1) {
-  //     direction = -1;
-  //   } else if (direction === -1 && index === 0) {
-  //     direction = 1;
-  //   }
-
-  //   index += direction;
-  // }, 1000); 
-
   socket.on('disconnect', () => {
     console.log('❌ Client déconnecté');
     // clearInterval(interval);
@@ -106,6 +80,7 @@ io.on('connection', (socket: any) => {
 app.use("/user", UserRoutes);
 app.use("/moto", MotoRoutes);
 app.use("/coordinate", CoordinateRoutes);
+app.use("/notification", NotificationRoutes);
 
 
 
@@ -263,23 +238,6 @@ app.post('/api/gps', async (req, res) => {
 
 
 
-// app.get('/api/gps', (req: any, res: any) => {
-//   if (!lastData) return res.status(404).json({ message: 'Aucune donnée' });
-//   res.json({ success: true, data: lastData });
-// });
-
-
-app.get('/api/vibration', (req: any, res: any) => {
-  console.log("Vibration détectée");
-  io.emit('alerte', {
-    message: "Vibration détécté sur votre moto",
-    userId : 1
-  });
-  res.json({ success: true, data: lastData });
-});
-
-
-
 app.post('/proxy-gps', async (req: any, res: any) => {
   try {
 
@@ -294,40 +252,6 @@ app.post('/proxy-gps', async (req: any, res: any) => {
     res.status(500).json({ success: false, message: error.message });
   }
 });
-
-
-async function addCoord () {
-  try {
-
-    for (let index = 0; index < coordonne.length; index++) {
-      const data = {
-        "motoId": 1,
-        "long": coordonne[index].long,
-        "lat": coordonne[index].lat,
-        "speed": 120,
-        "cap":"north"
-      }
-      await axios.post('https://mc-back.onrender.com/coordinate/create', data, {
-        headers: { 'Content-Type': 'application/json' }
-      });
-      console.log(index," : long=",coordonne[index].long,", lat=",coordonne[index].lat);
-      
-    }
-    console.log("Les coordonnées sont bien ajouté dans la db");
-  } catch (error : any) {
-    console.error("Erreur lors de l'ajout des coordonnées:", error);
-  }  
-}
-// addCoord()
-
-
-if (distanceMeters < 1000) {
-  console.log(`Distance entre le départ et la fin : ${distanceMeters.toFixed(2)} mètres`);
-} else {
-  const distanceKm = distanceMeters / 1000;
-  console.log(`Distance entre le départ et la fin : ${distanceKm.toFixed(2)} km`);
-}
-
 
 
 async function initializeAfterStart() {
@@ -346,3 +270,38 @@ server.listen(PORT, () => {
   console.log(`✅ API Motosecure MG by mickael démarrée sur http://localhost:${PORT}`);
   initializeAfterStart(); 
 });
+
+
+
+
+
+
+
+
+
+
+
+
+// async function addCoord () {
+//   try {
+
+//     for (let index = 0; index < coordonne.length; index++) {
+//       const data = {
+//         "motoId": 1,
+//         "long": coordonne[index].long,
+//         "lat": coordonne[index].lat,
+//         "speed": 120,
+//         "cap":"north"
+//       }
+//       await axios.post('https://mc-back.onrender.com/coordinate/create', data, {
+//         headers: { 'Content-Type': 'application/json' }
+//       });
+//       console.log(index," : long=",coordonne[index].long,", lat=",coordonne[index].lat);
+      
+//     }
+//     console.log("Les coordonnées sont bien ajouté dans la db");
+//   } catch (error : any) {
+//     console.error("Erreur lors de l'ajout des coordonnées:", error);
+//   }  
+// }
+// addCoord()
