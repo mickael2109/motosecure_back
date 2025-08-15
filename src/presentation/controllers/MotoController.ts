@@ -8,6 +8,7 @@ import { GetAllMotoUserUseCase } from "../../domain/usecases/Moto/GetAllMotoUser
 import { GetMotoUseCase } from "../../domain/usecases/Moto/GetMotoUC";
 import { dataEtatMoto, dataVirabtionMoto, deviceState, etatInterface, isVibrationInterface } from "../../data/dataStocked";
 import { RequestWithIO } from "../../domain/entities/RequestWithIO";
+import { redisClient } from "../../lib/redis";
 
 
 
@@ -69,6 +70,15 @@ export class MotoController {
         const repo = new PrismaMotoRepository();
         const useCase = new GetMotoUseCase(repo);
         const response = await useCase.execute(req.body.motoId);
+
+        const motoId = response.id;
+
+        const long = await redisClient.get(`long${motoId}`);
+        const lat = await redisClient.get(`lat${motoId}`);
+
+        if (long !== null) response.long = parseFloat(long);
+        if (lat !== null) response.lat = parseFloat(lat);
+
         res.status(201).json({
             data: response,
             success: true,
@@ -82,9 +92,24 @@ export class MotoController {
     //  get all moto user
     static async getAllMotoUser(req: Request, res: Response) {
         try {
+            
         const repo = new PrismaMotoRepository();
         const useCase = new GetAllMotoUserUseCase(repo);
         const response = await useCase.execute(req.body.userId);
+        
+        
+
+        for (let index = 0; index < response.length; index++) {
+            const motoId = response[index].id;
+
+            const long = await redisClient.get(`long${motoId}`);
+            const lat = await redisClient.get(`lat${motoId}`);
+
+            if (long !== null) response[index].long = parseFloat(long);
+            if (lat !== null) response[index].lat = parseFloat(lat);
+
+        }
+
         res.status(201).json({
             message: "Liste des motos de l'utilisateur récupérée avec succès!",
             data: response,
@@ -146,8 +171,14 @@ export class MotoController {
      
 
         let statusMoteur = req.body.status === true ? "on" : "off"
+        let vibrationEnabledData = req.body.status === true ? "off":"on"
         let vibrationStatus = req.body.status === true ? false : true
         
+        await redisClient.set(`vibrationEnabled${req.body.id}`, vibrationEnabledData );
+        await redisClient.set(`moteurOn${req.body.id}`, statusMoteur);
+        
+        console.log("valeur dans redis bien à jour");
+
         const prev = deviceState[req.body.id] || { moteur: "on", bip: false, version: 0, updatedAt: 0 };
         const next = {
             moteur: statusMoteur ?? prev.moteur,

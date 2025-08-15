@@ -40,6 +40,8 @@ model Moto {
   status               Boolean   @default(false)
   isVibration          Boolean   @default(false)
   userId               Int
+  long                 Float     @default(0)
+  lat                  Float     @default(0)
   createdAt            DateTime  @default(now())
   updatedAt            DateTime  @updatedAt
 

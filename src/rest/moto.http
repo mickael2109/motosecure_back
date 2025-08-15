@@ -18,7 +18,7 @@ Content-Type: application/json
 
 
 ### get all moto user
-POST https://mc-back.onrender.com/moto/getallmotouser
+POST http://localhost:8080/moto/getallmotouser
 Content-Type: application/json
 
 {
@@ -29,7 +29,7 @@ Content-Type: application/json
 
 
 ### get moto
-POST https://mc-back.onrender.com/moto/get
+POST http://localhost:8080/moto/get
 Content-Type: application/json
 
 {

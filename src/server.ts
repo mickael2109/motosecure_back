@@ -156,7 +156,7 @@ app.post('/api/gps', async (req, res) => {
       await redisClient.set(`vibrationEnabled${deviceId}`, vibrationEnabledData );
       await redisClient.set(`moteurOn${deviceId}`, moteurOnData);
 
-      console.log("valeur dans redis bien ajouté");
+      console.log("valeur dans redis bien à jour");
 
       // save data
       const rep =await axios.post('https://mc-back.onrender.com/coordinate/create', data, {
@@ -192,7 +192,7 @@ app.post('/api/gps', async (req, res) => {
           await redisClient.set(`vibrationEnabled${deviceId}`, vibrationEnabledData );
           await redisClient.set(`moteurOn${deviceId}`, moteurOnData);
 
-          console.log("valeur dans redis bien ajouté");
+          console.log("valeur dans redis bien à jour");
 
           // save data
           const rep = await axios.post('https://mc-back.onrender.com/coordinate/create', data, {
@@ -341,7 +341,7 @@ async function initializeAfterStart() {
 }
 
 
-const PORT = process.env.PORT || 8081;
+const PORT = process.env.PORT || 8080;
 server.listen(PORT, () => {
   console.log(`✅ API Motosecure MG by mickael démarrée sur http://localhost:${PORT}`);
   initializeAfterStart(); 
