@@ -90,7 +90,7 @@ export let dataNew : any = null;
 
 app.post('/api/gps', async (req, res) => {
   const { deviceId, vibrationEnabled, moteurOn, latitude, longitude, cap, speed } = req.body;
-  // console.log("GPS : ",req.body);
+  console.log("GPS : ",req.body);
   
   // Vérification si latitude ou longitude invalides
   if (
