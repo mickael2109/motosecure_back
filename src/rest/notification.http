@@ -18,7 +18,7 @@ Content-Type: application/json
 
 
 ### get all notification user
-POST http://localhost:8080/notification/getall
+POST https://mc-back.onrender.com/notification/getall
 Content-Type: application/json
 
 {

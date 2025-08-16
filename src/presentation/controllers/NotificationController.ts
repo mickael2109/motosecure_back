@@ -16,7 +16,7 @@ export class NotificationController {
         const rep = await useCase.execute(req.body);
 
         req.io.emit('alerte', {
-          data: rep,
+          rep,
         });
 
         res.status(201).json({
