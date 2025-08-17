@@ -163,7 +163,7 @@ export class MotoController {
         try {
         const repo = new PrismaMotoRepository();
         const useCase = new OnOffMotoUseCase(repo);
-        const user = await useCase.execute(req.body);
+        const response = await useCase.execute(req.body);
 
         let message = "Votre moto est éteint"
         if(req.body.status === true) message = "Votre moto est allumé"
@@ -188,6 +188,12 @@ export class MotoController {
         };
         deviceState[req.body.id] = next;
 
+        const motoId = response.id;
+        const long = await redisClient.get(`long${motoId}`);
+        const lat = await redisClient.get(`lat${motoId}`);
+        if (long !== null) response.long = parseFloat(long);
+        if (lat !== null) response.lat = parseFloat(lat);
+
 
         req.io.emit('statusmoto', {
           message: message,
@@ -199,7 +205,7 @@ export class MotoController {
 
         res.status(201).json({
             message: message,
-            data: user,
+            data: response,
             success: true,
         });
         } catch (err: any) {

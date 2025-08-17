@@ -62,12 +62,12 @@ Content-Type: application/json
 
 
 ### vibration moto
-POST https://mc-back.onrender.com/moto/updatevibration
+POST http://localhost:8080/moto/updatevibration
 Content-Type: application/json
 
 {
     "id": 1,
-    "isVibration": false
+    "isVibration": true
 }
 
 
