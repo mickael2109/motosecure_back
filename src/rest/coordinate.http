@@ -11,14 +11,14 @@ Content-Type: application/json
 
 {
     "motoId": 1,
-    "long": -34.34342,
-    "lat": 56.14432,
+    "lat": -18.824085,
+    "long": 47.556445,
     "speed": 120,
-    "cap": "north"
+    "cap": "North"
 }
 
 
-
+# {"deviceId":"1","vibrationEnabled":false,"moteurOn":true,"latitude":-18.824085,"longitude":47.556445,"cap":0.00,"speed":1.54}
 ### get all moto user
 POST https://mc-back.onrender.com/coordinate/getallcoordmoto
 Content-Type: application/json
@@ -42,4 +42,4 @@ Content-Type: application/json
 
 
 ### delete all coordinates
-DELETE http://localhost:8080/coordinate/deleteall
+DELETE https://mc-back.onrender.com/coordinate/deleteall

@@ -54,7 +54,7 @@ app.post("/api/device/:id/ack", auth, (req, res) => {
 
 const io = new SocketIoServer(server, {
   cors: {
-    origin: 'http://localhost:3000',
+    origin: 'http://localhost:5173',
     methods: ['GET', 'POST', 'PUT'] // Inclure PUT si nécessaire
   }
 });
@@ -88,7 +88,8 @@ app.use("/notification", NotificationRoutes);
 export let lastData : any = null;
 export let dataNew : any = null;
 
-app.post('/api/gps', async (req, res) => {
+
+ app.post('/api/gps', async (req, res) => {
   const { deviceId, vibrationEnabled, moteurOn, latitude, longitude, cap, speed } = req.body;
   console.log("GPS : ",req.body);
   
@@ -103,137 +104,236 @@ app.post('/api/gps', async (req, res) => {
     return res.json({ success: false, message: "Invalid coordinates" });
   }
 
-  // Arrondir à 2 chiffres après la virgule
-  const lat2 = Number(latitude).toFixed(2);
-  const lon2 = Number(longitude).toFixed(2);
-
-
   const isoString = new Date().toISOString();
   const today = moment(isoString).format('DD-MM-YYYY');
   
 
-  if(lastData){
-    if(moment(lastData.timestamp).format('DD-MM-YYYY') !== today){
-      dataNew = { latitude, longitude, cap, speed, timestamp: new Date().toISOString() };
-      const data = {
-        "motoId": parseInt(deviceId),
-        "long": parseFloat(longitude),
-        "lat": parseFloat(latitude),
-        "speed": parseFloat(cap),
-        "cap":"north"
-      }
+  const data = {
+    "motoId": parseInt(deviceId),
+    "long": parseFloat(longitude),
+    "lat": parseFloat(latitude),
+    "speed": parseFloat(speed),
+    "cap":"north"
+  }
+  
+  // save redis
+  let vibrationEnabledData = vibrationEnabled ? "on":"off"
+  let moteurOnData = moteurOn ? "on":"off"
+  await redisClient.set(`long${deviceId}`, longitude);
+  await redisClient.set(`lat${deviceId}`, latitude);
+  await redisClient.set(`vibrationEnabled${deviceId}`, vibrationEnabledData );
+  await redisClient.set(`moteurOn${deviceId}`, moteurOnData);
+
+  console.log("valeur dans redis bien à jour");
+
+  // save data
+  const rep =await axios.post('https://mc-back.onrender.com/coordinate/create', data, {
+    headers: { 'Content-Type': 'application/json' }
+  });
+
+  io.emit('gps', {
+    data: rep.data,
+    status: "move"
+  });
+
+  console.log("✅ Nouvelle donnée enregistrée aujourd'hui :", dataNew);
+
+  res.json({ success: true });
+});
+
+
+
+// app.post('/api/gps', async (req, res) => {
+//   const { deviceId, vibrationEnabled, moteurOn, latitude, longitude, cap, speed } = req.body;
+//   console.log("GPS : ",req.body);
+  
+//   // Vérification si latitude ou longitude invalides
+//   if (
+//     latitude == null ||
+//     longitude == null ||
+//     latitude === 0 ||
+//     longitude === 0
+//   ) {
+//     console.log("⚠️ Données invalides, aucune mise à jour.");
+//     return res.json({ success: false, message: "Invalid coordinates" });
+//   }
+
+//   // Arrondir à 2 chiffres après la virgule
+//   const lat2 = Number(latitude).toFixed(2);
+//   const lon2 = Number(longitude).toFixed(2);
+
+
+//   const isoString = new Date().toISOString();
+//   const today = moment(isoString).format('DD-MM-YYYY');
+  
+
+//   if(lastData){
+//     if(moment(lastData.timestamp).format('DD-MM-YYYY') !== today){
+//       dataNew = { latitude, longitude, cap, speed, timestamp: new Date().toISOString() };
+//       const data = {
+//         "motoId": parseInt(deviceId),
+//         "long": parseFloat(longitude),
+//         "lat": parseFloat(latitude),
+//         "speed": parseFloat(cap),
+//         "cap":"north"
+//       }
       
-      // save redis
-      let vibrationEnabledData = vibrationEnabled ? "on":"off"
-      let moteurOnData = moteurOn ? "on":"off"
-      await redisClient.set(`long${deviceId}`, longitude);
-      await redisClient.set(`lat${deviceId}`, latitude);
-      await redisClient.set(`vibrationEnabled${deviceId}`, vibrationEnabledData );
-      await redisClient.set(`moteurOn${deviceId}`, moteurOnData);
+//       // save redis
+//       let vibrationEnabledData = vibrationEnabled ? "on":"off"
+//       let moteurOnData = moteurOn ? "on":"off"
+//       await redisClient.set(`long${deviceId}`, longitude);
+//       await redisClient.set(`lat${deviceId}`, latitude);
+//       await redisClient.set(`vibrationEnabled${deviceId}`, vibrationEnabledData );
+//       await redisClient.set(`moteurOn${deviceId}`, moteurOnData);
+
+//       console.log("valeur dans redis bien à jour");
+
+//       // save data
+//       const rep =await axios.post('https://mc-back.onrender.com/coordinate/create', data, {
+//         headers: { 'Content-Type': 'application/json' }
+//       });
+
+//       io.emit('gps', {
+//         data: rep.data,
+//         status: "move"
+//       });
+
+//       console.log("✅ Nouvelle donnée enregistrée aujourd'hui :", dataNew);
+//     }else{
+//         if (
+//           !dataNew ||
+//           lat2 !== Number(dataNew.latitude).toFixed(2) ||
+//           lon2 !== Number(dataNew.longitude).toFixed(2)
+//         ) {
+//           dataNew = { latitude, longitude, cap, speed, timestamp: new Date().toISOString() };
+//           const data = {
+//             "motoId": parseInt(deviceId),
+//             "long": parseFloat(longitude),
+//             "lat": parseFloat(latitude),
+//             "speed": parseFloat(cap),
+//             "cap":"north"
+//           }
+
+//           // save redis
+//           let vibrationEnabledData = vibrationEnabled ? "on":"off"
+//           let moteurOnData = moteurOn ? "on":"off"
+//           await redisClient.set(`long${deviceId}`, longitude);
+//           await redisClient.set(`lat${deviceId}`, latitude);
+//           await redisClient.set(`vibrationEnabled${deviceId}`, vibrationEnabledData );
+//           await redisClient.set(`moteurOn${deviceId}`, moteurOnData);
+
+//           console.log("valeur dans redis bien à jour");
+
+//           // save data
+//           const rep = await axios.post('https://mc-back.onrender.com/coordinate/create', data, {
+//             headers: { 'Content-Type': 'application/json' }
+//           });
+
+//           io.emit('gps', {
+//             data: rep.data,
+//             status: "move"
+//           });
+//           console.log("✅ Nouvelle donnée enregistrée :", dataNew);
+//         } else {
+//           io.emit('gps', {
+//             data: {
+//               longitude: longitude,
+//               latitude: latitude,
+//               cap: cap,
+//               speed: speed,
+//               userId : 1,
+//             },
+//             status: "stay"
+//           });
+//           console.log("ℹ️ Coordonnées inchangées, pas de mise à jour. (",dataNew,")");
+//         }
+      
+//     }
+//   }else{
+//     dataNew = { latitude, longitude, cap, speed, timestamp: new Date().toISOString() };
+//       const data = {
+//         "motoId": parseInt(deviceId),
+//         "long": parseFloat(longitude),
+//         "lat": parseFloat(latitude),
+//         "speed": parseFloat(cap),
+//         "cap":"north"
+//       }
+
+//       // save redis
+//       let vibrationEnabledData = vibrationEnabled ? "on":"off"
+//       let moteurOnData = moteurOn ? "on":"off"
+//       await redisClient.set(`long${deviceId}`, longitude);
+//       await redisClient.set(`lat${deviceId}`, latitude);
+//       await redisClient.set(`vibrationEnabled${deviceId}`, vibrationEnabledData );
+//       await redisClient.set(`moteurOn${deviceId}`, moteurOnData);
+
+//       console.log("valeur dans redis bien ajouté");
+
+//       // save data
+//       const rep = await axios.post('https://mc-back.onrender.com/coordinate/create', data, {
+//         headers: { 'Content-Type': 'application/json' }
+//       });
+
+//       io.emit('gps', {
+//         data: rep.data,
+//         status: "move"
+//       });
+
+//       console.log("✅ Nouvelle donnée enregistrée aujourd'hui :", dataNew);
+//   }
+  
+
+
+//   // Toujours mettre à jour lastData pour garder la trace du dernier reçu
+//   lastData = { latitude, longitude, cap, timestamp: new Date().toISOString() };
+
+//   res.json({ success: true });
+// });
+
+
+async function addCoord () {
+  try {
+    for (let index = 0; index < coordonne.length; index++) {
+      const data = {
+        motoId: 1,
+        long: coordonne[index].long,
+        lat: coordonne[index].lat,
+        speed: 120,
+        cap: "north"
+      };
+
+      await redisClient.set(`long${1}`, coordonne[index].long);
+      await redisClient.set(`lat${1}`, coordonne[index].lat);
 
       console.log("valeur dans redis bien à jour");
 
       // save data
-      const rep =await axios.post('https://mc-back.onrender.com/coordinate/create', data, {
-        headers: { 'Content-Type': 'application/json' }
-      });
+      const rep = await axios.post(
+        "http://localhost:8080/coordinate/create",
+        data,
+        { headers: { "Content-Type": "application/json" } }
+      );
 
-      io.emit('gps', {
+      io.emit("gps", {
         data: rep.data,
         status: "move"
       });
 
-      console.log("✅ Nouvelle donnée enregistrée aujourd'hui :", dataNew);
-    }else{
-        if (
-          !dataNew ||
-          lat2 !== Number(dataNew.latitude).toFixed(2) ||
-          lon2 !== Number(dataNew.longitude).toFixed(2)
-        ) {
-          dataNew = { latitude, longitude, cap, speed, timestamp: new Date().toISOString() };
-          const data = {
-            "motoId": parseInt(deviceId),
-            "long": parseFloat(longitude),
-            "lat": parseFloat(latitude),
-            "speed": parseFloat(cap),
-            "cap":"north"
-          }
+      console.log("✅ Nouvelle donnée enregistrée :", data);
 
-          // save redis
-          let vibrationEnabledData = vibrationEnabled ? "on":"off"
-          let moteurOnData = moteurOn ? "on":"off"
-          await redisClient.set(`long${deviceId}`, longitude);
-          await redisClient.set(`lat${deviceId}`, latitude);
-          await redisClient.set(`vibrationEnabled${deviceId}`, vibrationEnabledData );
-          await redisClient.set(`moteurOn${deviceId}`, moteurOnData);
-
-          console.log("valeur dans redis bien à jour");
-
-          // save data
-          const rep = await axios.post('https://mc-back.onrender.com/coordinate/create', data, {
-            headers: { 'Content-Type': 'application/json' }
-          });
-
-          io.emit('gps', {
-            data: rep.data,
-            status: "move"
-          });
-          console.log("✅ Nouvelle donnée enregistrée :", dataNew);
-        } else {
-          io.emit('gps', {
-            data: {
-              longitude: longitude,
-              latitude: latitude,
-              cap: cap,
-              speed: speed,
-              userId : 1,
-            },
-            status: "stay"
-          });
-          console.log("ℹ️ Coordonnées inchangées, pas de mise à jour. (",dataNew,")");
-        }
-      
+      // await(10000)
+      // ⏳ attendre 10s avant la prochaine coordonnée
+      await new Promise(resolve => setTimeout(resolve, 10000));
     }
-  }else{
-    dataNew = { latitude, longitude, cap, speed, timestamp: new Date().toISOString() };
-      const data = {
-        "motoId": parseInt(deviceId),
-        "long": parseFloat(longitude),
-        "lat": parseFloat(latitude),
-        "speed": parseFloat(cap),
-        "cap":"north"
-      }
 
-      // save redis
-      let vibrationEnabledData = vibrationEnabled ? "on":"off"
-      let moteurOnData = moteurOn ? "on":"off"
-      await redisClient.set(`long${deviceId}`, longitude);
-      await redisClient.set(`lat${deviceId}`, latitude);
-      await redisClient.set(`vibrationEnabled${deviceId}`, vibrationEnabledData );
-      await redisClient.set(`moteurOn${deviceId}`, moteurOnData);
+    console.log("Toutes les coordonnées ont été ajoutées dans la DB");
+  } catch (error: any) {
+    console.error("Erreur lors de l'ajout des coordonnées:", error);
+  }  
+}
 
-      console.log("valeur dans redis bien ajouté");
+// addCoord()
 
-      // save data
-      const rep = await axios.post('https://mc-back.onrender.com/coordinate/create', data, {
-        headers: { 'Content-Type': 'application/json' }
-      });
-
-      io.emit('gps', {
-        data: rep.data,
-        status: "move"
-      });
-
-      console.log("✅ Nouvelle donnée enregistrée aujourd'hui :", dataNew);
-  }
-  
-
-
-  // Toujours mettre à jour lastData pour garder la trace du dernier reçu
-  lastData = { latitude, longitude, cap, timestamp: new Date().toISOString() };
-
-  res.json({ success: true });
-});
 
 
 
@@ -282,26 +382,3 @@ server.listen(PORT, () => {
 
 
 
-// async function addCoord () {
-//   try {
-
-//     for (let index = 0; index < coordonne.length; index++) {
-//       const data = {
-//         "motoId": 1,
-//         "long": coordonne[index].long,
-//         "lat": coordonne[index].lat,
-//         "speed": 120,
-//         "cap":"north"
-//       }
-//       await axios.post('https://mc-back.onrender.com/coordinate/create', data, {
-//         headers: { 'Content-Type': 'application/json' }
-//       });
-//       console.log(index," : long=",coordonne[index].long,", lat=",coordonne[index].lat);
-      
-//     }
-//     console.log("Les coordonnées sont bien ajouté dans la db");
-//   } catch (error : any) {
-//     console.error("Erreur lors de l'ajout des coordonnées:", error);
-//   }  
-// }
-// addCoord()

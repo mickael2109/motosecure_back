@@ -56,7 +56,7 @@ Content-Type: application/json
 
 {
     "id": 1,
-    "status": true
+    "status": false
 }
 
 
@@ -67,7 +67,7 @@ Content-Type: application/json
 
 {
     "id": 1,
-    "isVibration": true
+    "isVibration": false
 }
 
 

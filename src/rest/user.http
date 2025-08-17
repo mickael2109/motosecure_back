@@ -35,20 +35,20 @@ Content-Type: application/json
 
 
 ### get all user
-GET http://localhost:8080/user/getall
+GET https://mc-back.onrender.com/user/getall
 
 
 
 ### update user
-POST http://localhost:8080/user/update
+POST https://mc-back.onrender.com/user/update
 Content-Type: application/json
 
 {
     "id": 1,
-    "name": "", 
+    "name": "RAKOTONDRAVONY Mickael", 
     "pseudo": "mickael", 
-    "adresse": "", 
-    "phone": "", 
+    "adresse": "Lot E 119 AM Sab/Name", 
+    "phone": "0381099379", 
     "url": ""
 }
 
