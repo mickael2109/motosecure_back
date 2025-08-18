@@ -6,10 +6,13 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 
+# Générer le client Prisma
+RUN npx prisma generate
+
 # Copier tout le code
 COPY . .
 
-# Compiler le TypeScript vers dist/
+# Compiler le TypeScript
 RUN npm run build
 
 # Exposer le port
