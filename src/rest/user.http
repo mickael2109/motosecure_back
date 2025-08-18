@@ -24,7 +24,7 @@ Content-Type: application/json
 
 
 ### get user
-POST http://localhost:8080/user/get
+POST http://localhost:4000/user/get
 Content-Type: application/json
 
 {
@@ -35,7 +35,7 @@ Content-Type: application/json
 
 
 ### get all user
-GET https://mc-back.onrender.com/user/getall
+GET http://localhost:8080/user/getall
 
 
 
