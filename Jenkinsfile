@@ -15,10 +15,11 @@ pipeline {
         }
 
         stage('Restart Container') {
-            steps {
-                sh 'docker compose down || true'
-                sh 'docker compose up -d'
-            }
-        }
+          steps {
+              sh 'docker compose down || true'
+              sh 'docker rm -f api_motosecure || true'  // supprime l'ancien container si présent
+              sh 'docker compose up -d'
+          }
+      }
     }
 }
