@@ -6,5 +6,6 @@ services:
     ports:
       - "4000:4000"
     environment:
-      - NODE_ENV=production
+      DATABASE_URL: "postgresql://mc_bd_user:3TXfT8LVnAI50aEVdvinxOpRMAq98nJp@dpg-d23mksngi27c7384vtkg-a.oregon-postgres.render.com/mc_bd"
+      REDIS_URL: "redis://default:8DSHVL307CCfrPQnele9YgYg6Ol86pFs@redis-13663.c283.us-east-1-4.ec2.redns.redis-cloud.com:13663"
     restart: always
