@@ -6,11 +6,11 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 
+# Copier tout le code (y compris prisma/schema.prisma)
+COPY . .
+
 # Générer le client Prisma
 RUN npx prisma generate
-
-# Copier tout le code
-COPY . .
 
 # Compiler le TypeScript
 RUN npm run build
@@ -18,5 +18,5 @@ RUN npm run build
 # Exposer le port
 EXPOSE 4000
 
-# Lancer le serveur Node.js compilé
+# Lancer l'application
 CMD ["node", "dist/server.js"]
