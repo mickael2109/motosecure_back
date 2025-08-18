@@ -1,13 +1,10 @@
 pipeline {
-    agent { label 'docker' }  // ou juste 'any' si ton agent peut lancer docker
+    agent any
 
     stages {
         stage('Cloner le repo') {
             steps {
-                checkout([$class: 'GitSCM',
-                    branches: [[name: '*/main']],
-                    userRemoteConfigs: [[url: 'https://github.com/mickael2109/motosecure_back.git']]
-                ])
+                git branch: 'main', url: 'https://github.com/mickael2109/motosecure_back.git'
             }
         }
 
