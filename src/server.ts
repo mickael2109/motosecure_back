@@ -365,7 +365,7 @@ async function initializeAfterStart() {
 }
 
 
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 4000;
 server.listen(PORT, () => {
   console.log(`✅ API Motosecure MG by mickael démarrée sur http://localhost:${PORT}`);
   initializeAfterStart(); 
