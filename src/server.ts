@@ -89,7 +89,7 @@ export let lastData : any = null;
 export let dataNew : any = null;
 
 
- app.post('/api/gps', async (req, res) => {
+app.post('/api/gps', async (req, res) => {
   const { deviceId, vibrationEnabled, moteurOn, latitude, longitude, cap, speed } = req.body;
   console.log("GPS : ",req.body);
   
@@ -127,12 +127,35 @@ export let dataNew : any = null;
   console.log("valeur dans redis bien à jour");
 
   // save data
-  const rep =await axios.post('https://mc-back.onrender.com/coordinate/create', data, {
-    headers: { 'Content-Type': 'application/json' }
-  });
+  // const rep =await axios.post('https://mc-back.onrender.com/coordinate/create', data, {
+  //   headers: { 'Content-Type': 'application/json' }
+  // });
 
+  const dateEmit = {
+    id: 0,
+    motoId: 1,
+    long: parseFloat(longitude),
+    lat:parseFloat(latitude),
+    speed: parseFloat(speed),
+    cap: "North",
+    date: "2025-08-25T07:57:39.865Z",
+    createdAt: "2025-08-25T04:57:39.884Z",
+    updatedAt: "2025-08-25T04:57:39.884Z",
+    Moto: {
+      id: 1,
+      num_serie: "0001MG",
+      pseudo: "megafi kcc",
+      status: moteurOn,
+      isVibration: vibrationEnabled,
+      userId: 1,
+      long: parseFloat(longitude),
+      lat: parseFloat(latitude),
+      createdAt: "2025-07-29T11:55:40.983Z",
+      updatedAt: "2025-08-24T14:38:03.928Z"
+    }
+  }
   io.emit('gps', {
-    data: rep.data,
+    data: dateEmit,
     status: "move"
   });
 
