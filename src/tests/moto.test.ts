@@ -1,7 +1,7 @@
 // tests/moto.test.ts
 import { Request, Response } from "express";
-import { MotoController } from "../src/presentation/controllers/MotoController";
-import { CreateMotoUseCase } from "../src/domain/usecases/Moto/CreateMotoUC";
+import { MotoController } from "../presentation/controllers/MotoController";
+import { CreateMotoUseCase } from "../domain/usecases/Moto/CreateMotoUC";
 
 jest.mock("../src/domain/usecases/Moto/CreateMotoUC");
 

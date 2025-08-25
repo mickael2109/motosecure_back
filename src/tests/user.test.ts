@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { UserController } from "../src/presentation/controllers/UserController";
-import { CreateUserUseCase } from "../src/domain/usecases/User/CreateUserUseCase";
+import { UserController } from "../presentation/controllers/UserController";
+import { CreateUserUseCase } from "../domain/usecases/User/CreateUserUseCase";
 
 jest.mock("../src/domain/usecases/User/CreateUserUseCase");
 
